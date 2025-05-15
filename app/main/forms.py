@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, StringField, SelectField, BooleanField, ValidationError
-from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
+from wtforms_sqlalchemy.fields import QuerySelectMultipleField
 from wtforms.validators import DataRequired, Length, NumberRange, Optional
 from wtforms.fields import DateField
-from datetime import datetime
+from datetime import datetime, date
 from app.enum import MonthList, Color, CategoryIcon
 from app.models import Budget, Wallet, Transaction, Label, Category
-from datetime import date
 
 
 class WalletForm(FlaskForm):
@@ -23,13 +22,19 @@ class WalletForm(FlaskForm):
                 coerce=lambda name: Color[name])
   is_active = BooleanField('Active', default=True)
   
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.color.choices = Color.choices()
+  
 class BudgetForm(FlaskForm):
   """Form for adding/updating/deleting a Budget"""
   # Generate year choices dynamically
   current_year = datetime.now().year
   year_choices = [(str(year), str(year)) for year in range(current_year - 5, current_year + 6)]
   
-  amount = DecimalField('Amount', validators=[DataRequired()])
+  amount = DecimalField('Amount', places=2, validators=[
+                DataRequired(),
+                NumberRange(min=0.01, max=99999999.99, message="Amount must be between 0.01 and 99,999,999.99")])
   month = SelectField('Month', choices=[(m.name, m.value) for m in MonthList], validators=[DataRequired()])
   year = SelectField('Year', choices=year_choices, validators=[DataRequired()])
   category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
@@ -38,7 +43,7 @@ class BudgetForm(FlaskForm):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
 
-class Transaction(FlaskForm):
+class TransactionForm(FlaskForm):
   """Form for adding/updating/deleting a Transaction"""
   amount = DecimalField('Amount', places=2, validators=[
               DataRequired(),
@@ -50,6 +55,7 @@ class Transaction(FlaskForm):
               DataRequired()], default=date.today)
   is_expense = BooleanField('Is Expense', default=True)
   category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
+  wallet_id = SelectField('Wallet', coerce=int, validators=[DataRequired()])
   labels = QuerySelectMultipleField('Labels', query_factory=lambda: Label.query, 
               get_label='name', validators=[Optional()])
   
@@ -77,7 +83,7 @@ class Transaction(FlaskForm):
       self.labels.query_factory = lambda: Label.query.filter_by(user_id=user.id)
 
 
-class Label(FlaskForm):
+class LabelForm(FlaskForm):
   """Form for adding, updating, and deleting labels"""
   name = StringField('Label Name', validators=[
             DataRequired(),
@@ -104,7 +110,7 @@ class Label(FlaskForm):
         raise ValidationError(f"You already have a label named '{field.data}'")
 
 
-class Category(FlaskForm):
+class CategoryForm(FlaskForm):
   """Form for adding, updating and deleting a category"""
   name = StringField('Label Name', validators=[
             DataRequired(),

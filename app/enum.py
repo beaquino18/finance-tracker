@@ -4,12 +4,12 @@ class FormEnum(Enum):
     """Helper class to make it easier to use enums with forms."""
     @classmethod
     def choices(cls):
-        return [(choice.name, choice) for choice in cls]
+        return [(choice.name, choice.value) for choice in cls]
 
     def __str__(self):
         return str(self.value)
 
-class MonthList(Enum):
+class MonthList(FormEnum):
   JAN = 'January'
   FEB = 'February'
   MAR = 'March'
@@ -24,7 +24,7 @@ class MonthList(Enum):
   DEC = 'December'
   BLANK = ''
   
-class Color(Enum):
+class Color(FormEnum):
     ORANGE_RED = '#BB3E00'  # Your specified color
     BLUE = '#4A90E2'        # Professional blue
     GREEN = '#50E3C2'       # Mint green for cash
@@ -38,7 +38,7 @@ class Color(Enum):
     BLACK = '#2C3E50'       # Black for premium
     EMERALD = '#27AE60'     # Emerald for positive balance
 
-class CategoryIcon(Enum):
+class CategoryIcon(FormEnum):
     # Finance & Shopping
     SHOPPING_CART = "fa-shopping-cart"
     CREDIT_CARD = "fa-credit-card"

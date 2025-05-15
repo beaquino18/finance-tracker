@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from app.extensions import db
-from enum import Color, MonthList, CategoryIcon
+from app.enum import Color, MonthList, CategoryIcon
+from datetime import datetime
 
 class User(UserMixin, db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -8,7 +9,11 @@ class User(UserMixin, db.Model):
   last_name = db.Column(db.String(80), nullable=False)
   email = db.Column(db.String(120), nullable=False, unique=True, index=True)
   password = db.Column(db.String(200), nullable=False)
-  profile_image = db.Column(db.String)
+  profile_image = db.Column(db.String(200))
+  created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+  
+  def __repr__(self):
+    return f'<User {self.email}>'
   
 class Wallet(db.Model):
     """Wallet Model - represents user's accounts/payment methods"""
@@ -27,6 +32,9 @@ class Wallet(db.Model):
     __table_args__ = (
         db.UniqueConstraint('name', 'user_id', name='unique_wallet_per_user'),
     )
+    
+    def __repr__(self):
+        return f'<Wallet {self.name}: {self.balance}>'
 
 
 class Budget(db.Model):
@@ -44,6 +52,9 @@ class Budget(db.Model):
   user = db.relationship('User', backref=db.backref('budgets', lazy='dynamic'))
   wallet = db.relationship('Wallet',
             backref=db.backref('budgets', lazy='dynamic'))
+  
+  def __repr__(self):
+        return f'<Budget {self.amount} for {self.month.value} {self.year}>'
   
 """Join Table for Many to Many Relationships for Transactions and labels"""  
 transaction_labels = db.Table('transaction_labels',
@@ -64,10 +75,13 @@ class Transaction(db.Model):
   category = db.relationship('Category')
   user = db.relationship('User')
   labels = db.relationship('Label', 
-              secondary=transaction_labels,
+              secondary='transaction_labels',
               backref=db.backref('transactions', lazy='dynamic'))
   wallet = db.relationship('Wallet',
               backref=db.backref('transactions', lazy='dynamic'))
+  
+  def __repr__(self):
+    return f'<Transaction {self.amount} on {self.date}>'
   
 class Label(db.Model):
   """Label Model"""
@@ -91,6 +105,9 @@ class Label(db.Model):
     db.UniqueConstraint('name', 'user_id', name='unique_label_per_user')
   )
 
+  def __repr__(self):
+      return f'<Label {self.name}>'
+
   
 class Category(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -106,3 +123,6 @@ class Category(db.Model):
   __table_args__ = (
       db.UniqueConstraint('name', 'user_id', name='unique_category_per_user'),
   )
+
+  def __repr__(self):
+    return f'<Category {self.name}>'
