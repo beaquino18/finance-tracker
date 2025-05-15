@@ -1,22 +1,7 @@
 from flask_login import UserMixin
 from app.extensions import db
-from app.utils import FormEnum
+from enum import Color, MonthList, CategoryIcon
 
-class MonthList(FormEnum):
-  JAN = 'January'
-  FEB = 'February'
-  MAR = 'March'
-  APR = 'April'
-  MAY = 'May'
-  JUN = 'June'
-  JUL = 'July'
-  AUG = 'August'
-  SEP = 'September'
-  OCT = 'October'
-  NOV = 'November'
-  DEC = 'December'
-  BLANK = ''
-  
 class User(UserMixin, db.Model):
   id = db.Column(db.Integer, primary_key=True)
   first_name = db.Column(db.String(80), nullable=False)
@@ -30,8 +15,7 @@ class Wallet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)  # e.g. "Chase Checking", "Cash", "Amex"
     balance = db.Column(db.Numeric(precision=10, scale=2), nullable=False, default=0.00)
-    color = db.Column(db.String(7), nullable=False)  # For UI representation
-    icon = db.Column(db.String(80), nullable=False)  # Icon for wallet type
+    color = db.Column(db.Enum(Color), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)  # To hide/show wallets
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -58,8 +42,8 @@ class Budget(db.Model):
   #Relationships
   category = db.relationship('Category', backref=db.backref('budgets', lazy='dynamic'))
   user = db.relationship('User', backref=db.backref('budgets', lazy='dynamic'))
-  wallet = db.relationsip('Wallet',
-            backref=db.backref('transactions', lazy='dynamic'))
+  wallet = db.relationship('Wallet',
+            backref=db.backref('budgets', lazy='dynamic'))
   
 """Join Table for Many to Many Relationships for Transactions and labels"""  
 transaction_labels = db.Table('transaction_labels',
@@ -82,7 +66,7 @@ class Transaction(db.Model):
   labels = db.relationship('Label', 
               secondary=transaction_labels,
               backref=db.backref('transactions', lazy='dynamic'))
-  wallet = db.relationsip('Wallet',
+  wallet = db.relationship('Wallet',
               backref=db.backref('transactions', lazy='dynamic'))
   
 class Label(db.Model):
@@ -111,7 +95,7 @@ class Label(db.Model):
 class Category(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(80), nullable=False)
-  color = db.Column(db.String(7), nullable=False)
+  color = db.Column(db.Enum(Color), nullable=False)
   icon = db.Column(db.String(80), nullable=False)
   user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
   
@@ -122,19 +106,3 @@ class Category(db.Model):
   __table_args__ = (
       db.UniqueConstraint('name', 'user_id', name='unique_category_per_user'),
   )
-
-
-class Wallet(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  name = db.Column(db.String(80), nullable=False)
-  is_active = db.Column(db.Boolean, default=True, nullable=False)
-  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-  created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-  
-  # Relationships
-  user = db.relationship('User', backref=db.backref('wallets', lazy='dynamic'))
-  
-  # Ensure that wallet name is unique per user
-  __table_args__ = {
-    db.UniqueConstraint('name', 'user_id', name='unique_wallet_per_user')
-  }
