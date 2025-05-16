@@ -1,3 +1,4 @@
+# app/models.py
 from flask_login import UserMixin
 from app.extensions import db
 from app.enum import Color, MonthList, CategoryIcon
@@ -102,7 +103,7 @@ class Label(db.Model):
       
   """
   __table_args__ = (
-    db.UniqueConstraint('name', 'user_id', name='unique_label_per_user')
+    db.UniqueConstraint('name', 'user_id', name='unique_label_per_user'),
   )
 
   def __repr__(self):

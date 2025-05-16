@@ -1,3 +1,4 @@
+# app/config.py
 """Initialize Config class to access environment variables."""
 from dotenv import load_dotenv
 import os
