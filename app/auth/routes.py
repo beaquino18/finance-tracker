@@ -1,10 +1,9 @@
+# app/auth/routes.py
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-
 from app.models import User
 from app.auth.forms import SignUpForm, LoginForm
-
-from app.extensions import app, db, bcrypt
+from app.extensions import db, bcrypt
 
 auth = Blueprint("auth", __name__)
 
@@ -14,9 +13,16 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        
+        #Set profile image if none provided
+        profile_image = form.profile_image.data if form.profile_image.data else "/static/images/default_avatar.png"
+        
         user = User(
-            username=form.username.data,
-            password=hashed_password
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            profile_image=profile_image,
+            email=form.email.data,
+            password=hashed_password,
         )
         db.session.add(user)
         db.session.commit()
@@ -32,7 +38,7 @@ def login():
     form = LoginForm()
     
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         login_user(user, remember=True)
         next_page = request.args.get('next')
         
