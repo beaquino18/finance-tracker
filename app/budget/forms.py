@@ -13,7 +13,7 @@ class BudgetForm(FlaskForm):
   amount = DecimalField('Amount', places=2, validators=[
                 DataRequired(),
                 NumberRange(min=0.01, max=99999999.99, message="Amount must be between 0.01 and 99,999,999.99")])
-  month = SelectField('Month', choices=[(m.name, m.value) for m in MonthList], validators=[DataRequired()])
+  month = SelectField('Month', choices=MonthList.choices(), coerce=lambda name: MonthList[name], validators=[DataRequired()])
   year = SelectField('Year', choices=year_choices, validators=[DataRequired()])
   category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
   wallet_id = SelectField('Wallet', coerce=int, validators=[DataRequired()])

@@ -1,3 +1,4 @@
+# app/wallet/forms.py
 from flask_wtf import FlaskForm
 from wtforms import DecimalField, StringField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length, NumberRange
