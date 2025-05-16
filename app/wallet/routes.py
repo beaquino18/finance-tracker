@@ -1,12 +1,13 @@
+# app/wallet/routes.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.models import Wallet
-from app.main.forms import WalletForm
+from app.wallet.forms import WalletForm
 from app.extensions import db
 
-wallet_bp = Blueprint('wallet', __name__, url_prefix='/wallet')
+wallet = Blueprint('wallet', __name__)
 
-@wallet_bp.route('/create', methods=['GET', 'POST'])
+@wallet.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
   form = WalletForm()
@@ -33,10 +34,10 @@ def create():
     db.session.commit()
     
     flash('New Wallet was created successfully')
-    return redirect(url_for('main.wallet_detail', wallet_id=new_wallet.id))
+    return redirect(url_for('wallet.detail', wallet_id=new_wallet.id))
   return render_template('create_wallet.html', form=form)
 
-@wallet_bp.route('/wallet/<int:wallet_id>')
+@wallet.route('/<int:wallet_id>')
 @login_required
 def detail(wallet_id):
   wallet = db.session.get(Wallet, wallet_id)
@@ -56,7 +57,7 @@ def detail(wallet_id):
             transactions=transactions)
   
 
-@wallet_bp.route('/wallet/<int:wallet_id>/update', methods=['GET', 'POST'])
+@wallet.route('/<int:wallet_id>/update', methods=['GET', 'POST'])
 @login_required
 def update(wallet_id):
   wallet = db.session.get(Wallet, wallet_id)
@@ -64,7 +65,7 @@ def update(wallet_id):
   # Check if wallet exists and belongs to current user
   if not wallet or wallet.user_id != current_user.id:
     flash('Wallet not found or access denied')
-    return redirect(url_for('main.landing'))
+    return redirect(url_for('main.dashboard'))
   
   if request.method == 'POST':
     form = WalletForm()
@@ -77,13 +78,13 @@ def update(wallet_id):
       db.session.commit()
       
       flash('Wallet updated successfully')
-      return redirect(url_for('main.wallet_detail', wallet_id=wallet_id))
+      return redirect(url_for('wallet.detail', wallet_id=wallet_id))
   else:
     form = WalletForm(obj=wallet)
     
   return render_template('update_wallet.html', wallet=wallet, form=form)
 
-@wallet_bp.route('/wallet/<int:wallet_id>/delete', methods=['POST'])
+@wallet.route('/<int:wallet_id>/delete', methods=['POST'])
 @login_required
 def delete(wallet_id):
   wallet = db.session.get(Wallet, wallet_id)
@@ -96,7 +97,7 @@ def delete(wallet_id):
   # Check if wallet has transactions or budgets
   if wallet.transactions.count() > 0 or wallet.budgets.count() > 0:
     flash('Cannot delete wallet with existing transactions or budgets')
-    return redirect(url_for('main.wallet_detail', wallet_id=wallet_id))
+    return redirect(url_for('wallet.detail', wallet_id=wallet_id))
   
   db.session.delete(wallet)
   db.session.commit()
