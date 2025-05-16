@@ -1,27 +1,13 @@
-from flask import Flask
+"""Flask extensions and shared resources."""
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-from app.config import Config
-import os
+from flask_wtf.csrf import CSRFProtect
 
-app = Flask(__name__)
-app.config.from_object(Config)
-
-db = SQLAlchemy(app)
-
-###########################
-# Authentication
-###########################
-
+# Initialize extensions without binding to app yet
+db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
-login_manager.init_app(app)
-
-from .models import User
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
-
-bcrypt = Bcrypt(app)
+login_manager.login_message_category = 'info'
+bcrypt = Bcrypt()
+csrf = CSRFProtect()
