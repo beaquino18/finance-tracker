@@ -1,3 +1,4 @@
+# app/label/forms.py
 from flask_wtf import FlaskForm
 from wtforms import StringField, ValidationError
 from wtforms.validators import DataRequired, Length
