@@ -29,13 +29,18 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Log In')
     
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
-        if not user:
-            raise ValidationError('No user with that email. Please try again.')
-    
-    def validate_password(self, password):
+    def validate(self):
+        initial_validation = super(LoginForm, self).validate()
+        if not initial_validation:
+            return False
+        
         user = User.query.filter_by(email=self.email.data).first()
-        if user and not bcrypt.check_password_hash(
-            user.password, password.data):
-            raise ValidationError('Password doesn\'t match. Please try again.')
+        if not user:
+            self.email.errors.append('No user with that email')
+            return False
+        
+        if not bcrypt.check_password_hash(user.password, self.password.data):
+            self.password.errors.append('Invalid password')
+            return False
+        
+        return True
