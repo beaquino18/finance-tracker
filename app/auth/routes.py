@@ -44,6 +44,7 @@ def signup():
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """Handle user login with error handling and logging."""
     # Redirect if user is already logged in
     if current_user.is_authenticated:
         return redirect(url_for('main.homepage'))
@@ -51,16 +52,45 @@ def login():
     form = LoginForm()
     
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        login_user(user, remember=True)
-        next_page = request.args.get('next')
-        
-        # Validate that next_page is safe (prevent open redirect vulnerability)
-        if next_page and not is_safe_url(next_page):
-            return redirect(url_for('main.homepage'))
+        try:
+            # Get user by email
+            user = User.query.filter_by(email=form.email.data).first()
             
-        return redirect(next_page or url_for('main.homepage'))
-        
+            # Check if user exists
+            if not user:
+                flash('No user found with that email', 'danger')
+                return render_template('login.html', form=form)
+            
+            # Check password (this is also done in form validation but adds extra check)
+            if not bcrypt.check_password_hash(user.password, form.password.data):
+                flash('Invalid password', 'danger')
+                return render_template('login.html', form=form)
+            
+            # Login the user
+            login_user(user, remember=True)
+            flash(f'Welcome back, {user.first_name}!', 'success')
+            
+            # Get the next page or default to homepage
+            next_page = request.args.get('next')
+            
+            # Validate next_page is safe (prevent open redirect vulnerability)
+            if next_page and not is_safe_url(next_page):
+                return redirect(url_for('main.homepage'))
+                
+            return redirect(next_page or url_for('main.homepage'))
+            
+        except Exception as e:
+            # Log the error for debugging
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"Login Error: {str(e)}")
+            print(error_details)
+            
+            # Flash a user-friendly message
+            flash('An error occurred during login. Please try again.', 'danger')
+            return render_template('login.html', form=form)
+    
+    # If GET request or form validation failed, display the login form
     return render_template('login.html', form=form)
 
 @auth.route('/logout')

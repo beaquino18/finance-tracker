@@ -1,14 +1,23 @@
-from flask import render_template, redirect, url_for
+# app/main/routes.py
+from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Wallet, Transaction, Budget
-from app.main import main
+from app.models import Wallet, Transaction, Budget, Category, Label
+
+main = Blueprint('main', __name__)
 
 @main.route('/')
-def homepage():
-    """Homepage"""
+def index():
+    """Landing page for non-authenticated users."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.dashboard'))
-    return render_template('home.html')
+        return redirect(url_for('main.homepage'))
+    return render_template('index.html')
+
+@main.route('/home')
+@login_required
+def homepage():
+    """Homepage for authenticated users - shows user info and wallets."""
+    wallets = Wallet.query.filter_by(user_id=current_user.id).all()
+    return render_template('home.html', wallets=wallets)
 
 @main.route('/dashboard')
 @login_required
@@ -26,11 +35,11 @@ def dashboard():
     active_wallets_count = len(user_wallets)
     
     return render_template('dashboard.html',
-                          user=current_user,
-                          wallets=user_wallets,
-                          recent_transactions=user_transactions,
-                          labels=user_labels,
-                          categories=user_categories,
-                          budgets=user_budgets,
-                          total_balance=total_balance,
-                          active_wallets_count=active_wallets_count)
+            user=current_user,
+            wallets=user_wallets,
+            recent_transactions=user_transactions,
+            labels=user_labels,
+            categories=user_categories,
+            budgets=user_budgets,
+            total_balance=total_balance,
+            active_wallets_count=active_wallets_count)

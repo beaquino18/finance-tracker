@@ -16,19 +16,19 @@ def create_app(config_class=Config):
     
     # Register blueprints
     from app.auth.routes import auth as auth_blueprint
-    # from app.wallet.routes import wallet as wallet_blueprint
-    # from app.budget.routes import budget as budget_blueprint
-    # from app.transaction.routes import transaction as transaction_blueprint
-    # from app.category.routes import category as category_blueprint
-    # from app.label.routes import label as label_blueprint
+    from app.wallet.routes import wallet as wallet_blueprint
+    from app.budget.routes import budget as budget_blueprint
+    from app.transaction.routes import transaction as transaction_blueprint
+    from app.category.routes import category as category_blueprint
+    from app.label.routes import label as label_blueprint
     from app.main.routes import main as main_blueprint
     
     app.register_blueprint(auth_blueprint)
-    # app.register_blueprint(wallet_blueprint)
-    # app.register_blueprint(budget_blueprint)
-    # app.register_blueprint(transaction_blueprint)
-    # app.register_blueprint(category_blueprint)
-    # app.register_blueprint(label_blueprint)
+    app.register_blueprint(wallet_blueprint)
+    app.register_blueprint(budget_blueprint)
+    app.register_blueprint(transaction_blueprint)
+    app.register_blueprint(category_blueprint)
+    app.register_blueprint(label_blueprint)
     app.register_blueprint(main_blueprint)
     
     # Setup user loader for Flask-Login
