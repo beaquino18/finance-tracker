@@ -6,7 +6,7 @@ from app.models import Transaction, Wallet
 from app.transaction.forms import TransactionForm
 from app.extensions import db
 
-transaction = Blueprint('transaction', __name__)
+transaction = Blueprint('transaction', __name__, url_prefix='/transaction')
 
 @transaction.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -141,4 +141,4 @@ def delete(transaction_id):
   db.session.commit()
   
   flash('Transaction deleted successfully')
-  return redirect(url_for('main.dashboard'))
+  return redirect(url_for('wallet.detail', wallet_id=transaction.wallet_id))

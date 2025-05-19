@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} - Budget Tracker{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>
+            <i class="fas {{ category.icon }}"></i>
+            {{ category.name }}
+        </h1>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('category.update', category_id=category.id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Category
+        </a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCategoryModal">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    </div>
+</div>
+<!-- Delete Category Modal -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteCategoryModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the category "{{ category.name }}"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+                {% if transactions %}
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> This category is used by {{ transactions|length }} transaction(s). You must remove these associations first.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('category.delete', category_id=category.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger" {% if transactions %}disabled{% endif %}>Delete Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Category Details Card -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Category Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <p><strong>Name:</strong> {{ category.name }}</p>
+            </div>
+            <div class="col-md-4">
+                <p><strong>Icon:</strong> <i class="fas {{ category.icon }}"></i> {{ category.icon.split('-')[1:]|join(' ')|title }}</p>
+            </div>
+            <div class="col-md-4">
+                <p><strong>Color:</strong> <span class="badge badge-pill">{{ category.color.name }}</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Transactions Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Transactions in this Category</h3>
+    </div>
+    <div class="card-body">
+        {% if transactions %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Wallet</th>
+                            <th>Labels</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ transaction.description }}</td>
+                                <td>{{ transaction.wallet.name }}</td>
+                                <td>
+                                    {% for label in transaction.labels %}
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-tag"></i> {{ label.name }}
+                                        </span>
+                                    {% endfor %}
+                                </td>
+                                <td class="{{ 'text-success' if not transaction.is_expense else 'text-danger' }}">
+                                    {{ "+" if not transaction.is_expense else "-" }}${{ "%.2f"|format(transaction.amount) }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('transaction.detail', transaction_id=transaction.id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('transaction.update', transaction_id=transaction.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No transactions are using this category.
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Budgets Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Budgets for this Category</h3>
+    </div>
+    <div class="card-body">
+        {% set has_budgets = category.budgets.count() > 0 %}
+        {% if has_budgets %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Wallet</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for budget in category.budgets %}
+                            <tr>
+                                <td>{{ budget.month.value }}</td>
+                                <td>{{ budget.year }}</td>
+                                <td>{{ budget.wallet.name }}</td>
+                                <td>${{ "%.2f"|format(budget.amount) }}</td>
+                                <td>
+                                    <a href="{{ url_for('budget.detail', budget_id=budget.id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('budget.update', budget_id=budget.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('budget.update', budget_id=budget.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No budgets are set for this category.
+                <a href="{{ url_for('budget.create') }}" class="alert-link">Create a budget</a> for this category.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

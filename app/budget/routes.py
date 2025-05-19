@@ -6,7 +6,7 @@ from app.budget.forms import BudgetForm
 from app.extensions import db
 from app.enum import MonthList
 
-budget = Blueprint('budget', __name__)
+budget = Blueprint('budget', __name__, url_prefix='/budget')
 
 @budget.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -28,6 +28,9 @@ def create():
   
   form.category_id.choices = [(c.id, c.name) for c in categories]
   form.wallet_id.choices = [(w.id, w.name) for w in wallets]
+  
+  # Get wallet_id from request args if it exists
+  wallet_id = request.args.get('wallet_id')
   
   if form.validate_on_submit():
     # Check if budget category already exist in the wallet
@@ -58,8 +61,8 @@ def create():
     db.session.commit()
     
     flash('New budget was created successfully')
-    return redirect(url_for('budget.detail', budget_id=new_budget.id))
-  return render_template('create_budget.html', form=form)
+    return redirect(url_for('wallet.detail', wallet_id=form.wallet_id.data))
+  return render_template('create_budget.html', form=form, wallet_id=wallet_id)
 
 @budget.route('/<int:budget_id>')
 @login_required
@@ -97,10 +100,13 @@ def update(budget_id):
   form.category_id.choices = [(c.id, c.name) for c in current_user.categories.all()]
   form.wallet_id.choices = [(w.id, w.name) for w in current_user.wallets.filter_by(is_active=True).all()]
 
+  # Get wallet_id from request args if it exists
+  wallet_id = request.args.get('wallet_id')
+  
   if request.method == 'POST':
     if form.validate_on_submit():
       budget.amount = form.amount.data
-      budget.month = MonthList[form.month.data]
+      budget.month = form.month.data
       budget.year = int(form.year.data)
       budget.category_id = form.category_id.data
       budget.wallet_id = form.wallet_id.data
@@ -108,7 +114,7 @@ def update(budget_id):
       db.session.commit()
       
       flash('Budget updated successfully')
-      return redirect(url_for('budget.detail', budget_id=budget_id))
+      return redirect(url_for('wallet.detail', wallet_id=form.wallet_id.data))
   else:
     # Populate form with existing data
     form.amount.data = budget.amount
@@ -117,7 +123,7 @@ def update(budget_id):
     form.category_id.data = budget.category_id
     form.wallet_id.data = budget.wallet_id
   
-  return render_template('update_budget.html', budget=budget, form=form)
+  return render_template('update_budget.html', budget=budget, form=form, wallet_id=budget.wallet_id)
 
 
 @budget.route('/<int:budget_id>/delete', methods=['POST'])
@@ -133,4 +139,4 @@ def delete(budget_id):
   db.session.delete(budget)
   db.session.commit()
   flash('Budget deleted successfully')
-  return redirect(url_for('main.dashboard'))
+  return redirect(url_for('wallet.detail', wallet_id=budget.wallet_id))

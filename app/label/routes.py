@@ -6,7 +6,7 @@ from app.models import Label
 from app.label.forms import LabelForm
 from app.extensions import db
 
-label = Blueprint('label', __name__)
+label = Blueprint('label', __name__, url_prefix='/label')
 
 @label.route('/create', methods=['GET', 'POST'])
 @login_required

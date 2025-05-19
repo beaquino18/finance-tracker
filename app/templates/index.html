@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to Budget Tracker</h1>
+    <p class="lead">Manage your finances easily and efficiently.</p>
+    <hr class="my-4">
+    <p>Track your expenses, set budgets, and achieve your financial goals.</p>
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg mr-2" href="{{ url_for('auth.signup') }}" role="button">Sign Up</a>
+        <a class="btn btn-secondary btn-lg" href="{{ url_for('auth.login') }}" role="button">Log In</a>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-wallet fa-4x mb-3 text-primary"></i>
+                <h3 class="card-title">Manage Wallets</h3>
+                <p class="card-text">Keep track of your different accounts and cash flows in one place.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-pie fa-4x mb-3 text-primary"></i>
+                <h3 class="card-title">Budget Planning</h3>
+                <p class="card-text">Set monthly budgets for different categories and track your spending.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-tags fa-4x mb-3 text-primary"></i>
+                <h3 class="card-title">Transaction Labeling</h3>
+                <p class="card-text">Categorize and label your transactions for better financial insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

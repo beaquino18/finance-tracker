@@ -5,7 +5,7 @@ from app.models import Wallet
 from app.wallet.forms import WalletForm
 from app.extensions import db
 
-wallet = Blueprint('wallet', __name__)
+wallet = Blueprint('wallet', __name__, url_prefix='/wallet')
 
 @wallet.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -26,7 +26,6 @@ def create():
     new_wallet = Wallet(
       name=form.name.data,
       balance=form.balance.data,
-      color=form.color.data,
       is_active=form.is_active.data,
       user_id=current_user.id
     )
@@ -60,29 +59,29 @@ def detail(wallet_id):
 @wallet.route('/<int:wallet_id>/update', methods=['GET', 'POST'])
 @login_required
 def update(wallet_id):
-  wallet = db.session.get(Wallet, wallet_id)
-  
-  # Check if wallet exists and belongs to current user
-  if not wallet or wallet.user_id != current_user.id:
-    flash('Wallet not found or access denied')
-    return redirect(url_for('main.dashboard'))
-  
-  if request.method == 'POST':
-    form = WalletForm()
-    if form.validate_on_submit():
-      wallet.name = form.name.data
-      wallet.balance = form.balance.data
-      wallet.color = form.color.data
-      wallet.is_active = form.is_active.data
-      
-      db.session.commit()
-      
-      flash('Wallet updated successfully')
-      return redirect(url_for('wallet.detail', wallet_id=wallet_id))
-  else:
+    wallet = db.session.get(Wallet, wallet_id)
+    
+    # Check if wallet exists and belongs to current user
+    if not wallet or wallet.user_id != current_user.id:
+        flash('Wallet not found or access denied')
+        return redirect(url_for('main.dashboard'))
+    
+    # Create form - for GET requests, prepopulate with wallet data
     form = WalletForm(obj=wallet)
     
-  return render_template('update_wallet.html', wallet=wallet, form=form)
+    if request.method == 'POST':
+        form = WalletForm()
+        if form.validate_on_submit():
+            wallet.name = form.name.data
+            wallet.balance = form.balance.data
+            wallet.is_active = form.is_active.data
+            
+            db.session.commit()
+            
+            flash('Wallet updated successfully')
+            return redirect(url_for('wallet.detail', wallet_id=wallet_id))
+            
+    return render_template('update_wallet.html', wallet=wallet, form=form)
 
 @wallet.route('/<int:wallet_id>/delete', methods=['POST'])
 @login_required

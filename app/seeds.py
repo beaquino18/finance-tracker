@@ -1,203 +1,192 @@
 # app/seeds.py
-"""Functions to seed the database with sample data."""
+"""Database seeding script using direct model instances approach."""
 import random
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
-from app.extensions import db, bcrypt
+from sqlalchemy import text
+from app.extensions import db
 from app.models import User, Wallet, Category, Label, Budget, Transaction, transaction_labels
 from app.seed_data import (
-    USERS, WALLETS, CATEGORIES, LABELS, 
-    BUDGET_AMOUNTS, TRANSACTION_AMOUNTS, 
-    TRANSACTION_DESCRIPTIONS, MONTH_MAPPING
+    USERS, WALLETS, CATEGORIES, LABELS,
+    BUDGET_AMOUNTS, TRANSACTION_AMOUNTS, TRANSACTION_DESCRIPTIONS, MONTH_MAPPING
 )
 
-def create_sample_users():
-    """Create sample users using SQLAlchemy."""
-    # Prepare user data with hashed passwords
-    users_data = []
+def seed_database():
+    """Main function to seed the database with sample data."""
+    print("Starting database seeding...")
+    
+    # Add base entities
+    add_users()
+    add_wallets()
+    add_categories()
+    add_labels()
+    
+    # Add transactions and budgets
+    add_budgets()
+    add_transactions()
+    
+    print("Database seeding completed successfully!")
+
+def add_users():
+    """Add sample users to the database."""
+    # Create copies of the users to avoid modifying the originals
+    users_to_add = []
     for user in USERS:
-        user_data = user.copy()
-        user_data['password'] = bcrypt.generate_password_hash(user_data['password']).decode('utf-8')
-        users_data.append(user_data)
+        # Creating a new user with the same attributes
+        users_to_add.append(User(
+            first_name=user.first_name,
+            last_name=user.last_name,
+            email=user.email,
+            password=user.password,
+            profile_image=user.profile_image
+        ))
     
-    # Check for existing users to avoid duplicates
-    existing_emails = {user.email for user in User.query.all()}
-    new_users_data = [data for data in users_data if data['email'] not in existing_emails]
-    
-    # Create users
-    if new_users_data:
-        try:
-            # Bulk insert new users
-            db.session.bulk_insert_mappings(User, new_users_data)
-            db.session.commit()
-            print(f"Created {len(new_users_data)} new users")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating users: IntegrityError")
-    
-    # Return all users (new and existing)
-    return User.query.all()
+    try:
+        db.session.add_all(users_to_add)
+        db.session.commit()
+        print(f"Added {len(users_to_add)} users")
+    except IntegrityError:
+        db.session.rollback()
+        print("Error adding users: IntegrityError (users might already exist)")
 
-def create_sample_wallets(users):
-    """Create sample wallets for each user using SQLAlchemy."""
-    wallets_data = []
+def add_wallets():
+    """Add sample wallets for each user to the database."""
+    users = User.query.all()
+    wallets_to_add = []
     
-    # Prepare data for bulk insert
     for user in users:
-        # Get existing wallet names for this user
-        existing_wallets = {wallet.name for wallet in Wallet.query.filter_by(user_id=user.id).all()}
-        
-        for template in WALLETS:
-            if template['name'] not in existing_wallets:
-                wallet_data = template.copy()
-                wallet_data['user_id'] = user.id
-                wallets_data.append(wallet_data)
+        for wallet_template in WALLETS:
+            # Create a new wallet for each user based on the template
+            wallet = Wallet(
+                name=wallet_template.name,
+                balance=wallet_template.balance,
+                is_active=wallet_template.is_active,
+                user_id=user.id
+            )
+            wallets_to_add.append(wallet)
     
-    # Bulk insert new wallets
-    if wallets_data:
-        try:
-            db.session.bulk_insert_mappings(Wallet, wallets_data)
-            db.session.commit()
-            print(f"Created {len(wallets_data)} new wallets")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating wallets: IntegrityError")
-    
-    # Return all wallets
-    return Wallet.query.all()
+    try:
+        db.session.add_all(wallets_to_add)
+        db.session.commit()
+        print(f"Added {len(wallets_to_add)} wallets")
+    except IntegrityError:
+        db.session.rollback()
+        print("Error adding wallets: IntegrityError")
 
-def create_sample_categories(users):
-    """Create sample categories for each user using SQLAlchemy."""
-    categories_data = []
+def add_categories():
+    """Add sample categories for each user to the database."""
+    users = User.query.all()
+    categories_to_add = []
     
-    # Prepare data for bulk insert
     for user in users:
-        # Get existing category names for this user
-        existing_categories = {category.name for category in Category.query.filter_by(user_id=user.id).all()}
-        
-        for template in CATEGORIES:
-            if template['name'] not in existing_categories:
-                category_data = template.copy()
-                category_data['user_id'] = user.id
-                categories_data.append(category_data)
+        for category_template in CATEGORIES:
+            # Create a new category for each user based on the template
+            category = Category(
+                name=category_template.name,
+                color=category_template.color,
+                icon=category_template.icon,
+                user_id=user.id
+            )
+            categories_to_add.append(category)
     
-    # Bulk insert new categories
-    if categories_data:
-        try:
-            db.session.bulk_insert_mappings(Category, categories_data)
-            db.session.commit()
-            print(f"Created {len(categories_data)} new categories")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating categories: IntegrityError")
-    
-    # Return all categories
-    return Category.query.all()
+    try:
+        db.session.add_all(categories_to_add)
+        db.session.commit()
+        print(f"Added {len(categories_to_add)} categories")
+    except IntegrityError:
+        db.session.rollback()
+        print("Error adding categories: IntegrityError")
 
-def create_sample_labels(users):
-    """Create sample labels for each user using SQLAlchemy."""
-    labels_data = []
+def add_labels():
+    """Add sample labels for each user to the database."""
+    users = User.query.all()
+    labels_to_add = []
     
-    # Prepare data for bulk insert
     for user in users:
-        # Get existing label names for this user
-        existing_labels = {label.name for label in Label.query.filter_by(user_id=user.id).all()}
-        
-        for template in LABELS:
-            if template['name'] not in existing_labels:
-                label_data = template.copy()
-                label_data['user_id'] = user.id
-                labels_data.append(label_data)
+        for label_template in LABELS:
+            # Create a new label for each user based on the template
+            label = Label(
+                name=label_template.name,
+                user_id=user.id
+            )
+            labels_to_add.append(label)
     
-    # Bulk insert new labels
-    if labels_data:
-        try:
-            db.session.bulk_insert_mappings(Label, labels_data)
-            db.session.commit()
-            print(f"Created {len(labels_data)} new labels")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating labels: IntegrityError")
-    
-    # Return all labels
-    return Label.query.all()
+    try:
+        db.session.add_all(labels_to_add)
+        db.session.commit()
+        print(f"Added {len(labels_to_add)} labels")
+    except IntegrityError:
+        db.session.rollback()
+        print("Error adding labels: IntegrityError")
 
-def create_sample_budgets(users, categories, wallets):
-    """Create sample budgets for each user using SQLAlchemy."""
+def add_budgets():
+    """Add sample budgets for all users."""
     # Get current month and year
     current_month = datetime.now().month
     current_year = datetime.now().year
     
-    budgets_data = []
+    users = User.query.all()
+    budgets_to_add = []
     
-    # Check existing budgets to avoid duplicates
-    existing_budgets = []
-    for budget in Budget.query.filter_by(month=MONTH_MAPPING[current_month], year=current_year).all():
-        existing_budgets.append((budget.user_id, budget.category_id, budget.wallet_id))
-    
-    # Prepare budget data for each user
     for user in users:
-        user_categories = [cat for cat in categories if cat.user_id == user.id]
-        user_wallets = [wallet for wallet in wallets if wallet.user_id == user.id]
+        # Get user's categories and wallets
+        categories = Category.query.filter_by(user_id=user.id).all()
+        wallets = Wallet.query.filter_by(user_id=user.id, is_active=True).all()
         
-        if not user_categories or not user_wallets:
+        if not categories or not wallets:
             continue
         
         # Randomly select a wallet for all budgets
-        wallet = random.choice(user_wallets)
+        wallet = random.choice(wallets)
         
-        for category in user_categories:
+        for category in categories:
             # Skip income category for budgeting
             if category.name == 'Income':
                 continue
-                
-            # Skip if budget already exists
-            if (user.id, category.id, wallet.id) in existing_budgets:
-                continue
-                
+            
             # Generate budget amount based on category
             amount_range = BUDGET_AMOUNTS.get(category.name, BUDGET_AMOUNTS['Default'])
             amount = round(random.uniform(*amount_range), 2)
             
-            # Add to bulk insert data
-            budgets_data.append({
-                'amount': amount,
-                'month': MONTH_MAPPING[current_month],
-                'year': current_year,
-                'category_id': category.id,
-                'wallet_id': wallet.id,
-                'user_id': user.id
-            })
+            # Create budget
+            budget = Budget(
+                amount=amount,
+                month=MONTH_MAPPING[current_month],
+                year=current_year,
+                category_id=category.id,
+                wallet_id=wallet.id,
+                user_id=user.id
+            )
+            budgets_to_add.append(budget)
     
-    # Bulk insert budgets
-    if budgets_data:
-        try:
-            db.session.bulk_insert_mappings(Budget, budgets_data)
-            db.session.commit()
-            print(f"Created {len(budgets_data)} new budgets")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating budgets: IntegrityError")
-    
-    # Return all budgets
-    return Budget.query.all()
+    try:
+        db.session.add_all(budgets_to_add)
+        db.session.commit()
+        print(f"Added {len(budgets_to_add)} budgets")
+    except IntegrityError:
+        db.session.rollback()
+        print("Error adding budgets: IntegrityError")
 
-def create_sample_transactions(users, categories, wallets, labels):
-    """Create sample transactions and transaction labels using SQLAlchemy."""
+def add_transactions():
+    """Add sample transactions for all users."""
     # Generate date range for transactions
     end_date = datetime.now()
     start_date = end_date - timedelta(days=30)
     
-    transactions_data = []
+    users = User.query.all()
+    transactions_to_add = []
+    wallet_balance_updates = {}  # Track balance updates for each wallet
+    transaction_label_pairs = []  # Track transaction and label IDs to connect
     
-    # Process each user
     for user in users:
-        user_categories = [cat for cat in categories if cat.user_id == user.id]
-        user_wallets = [wallet for wallet in wallets if wallet.user_id == user.id]
+        # Get user's categories, wallets, and labels
+        categories = Category.query.filter_by(user_id=user.id).all()
+        wallets = Wallet.query.filter_by(user_id=user.id, is_active=True).all()
+        labels = Label.query.filter_by(user_id=user.id).all()
         
-        if not user_categories or not user_wallets:
+        if not categories or not wallets:
             continue
-            
+        
         # Generate 20-30 transactions per user
         num_transactions = random.randint(20, 30)
         
@@ -206,8 +195,8 @@ def create_sample_transactions(users, categories, wallets, labels):
             transaction_date = start_date + timedelta(days=random.randint(0, 30))
             
             # Randomly select category and wallet
-            category = random.choice(user_categories)
-            wallet = random.choice(user_wallets)
+            category = random.choice(categories)
+            wallet = random.choice(wallets)
             
             # Determine if expense or income
             is_expense = category.name != 'Income'
@@ -220,74 +209,76 @@ def create_sample_transactions(users, categories, wallets, labels):
             description_list = TRANSACTION_DESCRIPTIONS.get(category.name, TRANSACTION_DESCRIPTIONS['Default'])
             description = random.choice(description_list)
             
-            # Add transaction to bulk data
-            transaction_data = {
-                'amount': amount,
-                'description': description,
-                'date': transaction_date.date(),
-                'is_expense': is_expense,
-                'category_id': category.id,
-                'wallet_id': wallet.id,
-                'user_id': user.id
-            }
+            # Create transaction
+            transaction = Transaction(
+                amount=amount,
+                description=description,
+                date=transaction_date.date(),
+                is_expense=is_expense,
+                category_id=category.id,
+                wallet_id=wallet.id,
+                user_id=user.id
+            )
             
-            # Add to transactions data
-            transactions_data.append(transaction_data)
-    
-    # Bulk insert transactions
-    if transactions_data:
-        try:
-            db.session.bulk_insert_mappings(Transaction, transactions_data)
-            db.session.commit()
-            print(f"Created {len(transactions_data)} new transactions")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error creating transactions: IntegrityError")
-            return []
-    
-    # Now assign labels to transactions (need transaction IDs, so we do this after commit)
-    transactions = Transaction.query.filter(
-        Transaction.date >= start_date.date(),
-        Transaction.date <= end_date.date()
-    ).all()
-    
-    # For each transaction, randomly assign 0-2 labels
-    for transaction in transactions:
-        user_labels = [label for label in labels if label.user_id == transaction.user_id]
-        
-        if user_labels:
-            num_labels = random.randint(0, min(2, len(user_labels)))
+            transactions_to_add.append(transaction)
             
-            if num_labels > 0:
-                selected_labels = random.sample(user_labels, num_labels)
+            # Track balance updates for each wallet
+            if wallet.id not in wallet_balance_updates:
+                wallet_balance_updates[wallet.id] = 0
                 
-                for label in selected_labels:
-                    # Add to transaction_labels association table
-                    db.session.execute(transaction_labels.insert().values(
-                        transaction_id=transaction.id,
-                        label_id=label.id
-                    ))
+            # Update the balance tracking
+            if is_expense:
+                wallet_balance_updates[wallet.id] -= amount
+            else:
+                wallet_balance_updates[wallet.id] += amount
+            
+            # Prepare labels for this transaction (we'll add them after commit)
+            if labels:
+                num_labels = random.randint(0, min(2, len(labels)))
+                if num_labels > 0:
+                    selected_labels = random.sample(labels, num_labels)
+                    # Store the transaction and its labels to add after commit
+                    transaction_label_pairs.append((transaction, selected_labels))
     
-    # Commit the label assignments
     try:
+        # First add all transactions
+        db.session.add_all(transactions_to_add)
         db.session.commit()
-        print("Assigned labels to transactions")
-    except IntegrityError:
+        
+        # Now that transactions are committed and have IDs, we can add labels
+        label_associations_count = 0
+        for transaction, labels_to_add in transaction_label_pairs:
+            for label in labels_to_add:
+                # Add the association directly using SQLAlchemy text
+                sql = text("INSERT INTO transaction_labels (transaction_id, label_id) VALUES (:t_id, :l_id)")
+                db.session.execute(sql, {"t_id": transaction.id, "l_id": label.id})
+                label_associations_count += 1
+        
+        # Then update wallet balances
+        for wallet_id, balance_change in wallet_balance_updates.items():
+            wallet = Wallet.query.get(wallet_id)
+            if wallet:
+                # Use SQLAlchemy's update() for numeric operations
+                current_balance = float(wallet.balance)
+                new_balance = current_balance + balance_change
+                wallet.balance = new_balance
+        
+        db.session.commit()
+        print(f"Added {len(transactions_to_add)} transactions")
+        print(f"Added {label_associations_count} transaction-label relationships")
+        print(f"Updated balances for {len(wallet_balance_updates)} wallets")
+    except IntegrityError as e:
         db.session.rollback()
-        print("Error assigning labels: IntegrityError")
-    
-    return transactions
+        print(f"Error adding transactions: IntegrityError: {str(e)}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error adding transactions: {str(e)}")
 
-def seed_database():
-    """Main function to seed the database."""
-    print("Starting database seeding...")
-    
-    # Create sample data
-    users = create_sample_users()
-    wallets = create_sample_wallets(users)
-    categories = create_sample_categories(users)
-    labels = create_sample_labels(users)
-    budgets = create_sample_budgets(users, categories, wallets)
-    transactions = create_sample_transactions(users, categories, wallets, labels)
-    
-    print("Database seeding completed successfully!")
+
+
+if __name__ == "__main__":
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        seed_database()

@@ -1,52 +1,57 @@
 # app/seed_data.py
-"""Data definitions for database seeding."""
+"""Data definitions for database seeding using direct model instances."""
+from app.extensions import bcrypt
+from app.models import User, Wallet, Category, Label, Budget, Transaction
 from app.enum import Color, MonthList, CategoryIcon
 
-# User data
+# User instances
 USERS = [
-    {
-        'first_name': 'Mickey',
-        'last_name': 'Mouse',
-        'email': 'mickey_mouse@gmail.com',
-        'password': 'password123',
-        'profile_image': '/static/images/default_avatar.png'
-    },
-    {
-        'first_name': 'Minnie',
-        'last_name': 'Mouse',
-        'email': 'minnie_mouse@gmail.com',
-        'password': 'password123',
-        'profile_image': '/static/images/default_avatar.png'
-    }
+    User(
+        first_name='Mickey',
+        last_name='Mouse',
+        email='mickey_mouse@gmail.com',
+        password=bcrypt.generate_password_hash('password123').decode('utf-8'),
+        profile_image='/static/images/default_avatar.png'
+    ),
+    User(
+        first_name='Minnie',
+        last_name='Mouse',
+        email='minnie_mouse@gmail.com',
+        password=bcrypt.generate_password_hash('password123').decode('utf-8'),
+        profile_image='/static/images/default_avatar.png'
+    )
 ]
 
 # Wallet templates
 WALLETS = [
-    {'name': 'Cash', 'balance': 500.00, 'color': Color.GREEN, 'is_active': True},
-    {'name': 'Checking Account', 'balance': 2500.00, 'color': Color.NAVY, 'is_active': True},
-    {'name': 'Savings Account', 'balance': 10000.00, 'color': Color.GOLD, 'is_active': True},
-    {'name': 'Credit Card', 'balance': -450.00, 'color': Color.PURPLE, 'is_active': True}
+    # Will be created for each user
+    Wallet(name='Cash', balance=500.00, is_active=True),
+    Wallet(name='Checking Account', balance=2500.00, is_active=True),
+    Wallet(name='Savings Account', balance=10000.00, is_active=True),
+    Wallet(name='Credit Card', balance=-450.00, is_active=True)
 ]
 
 # Category templates
 CATEGORIES = [
-    {'name': 'Groceries', 'color': Color.GREEN, 'icon': 'fa-shopping-cart'},
-    {'name': 'Dining Out', 'color': Color.ORANGE_RED, 'icon': 'fa-utensils'},
-    {'name': 'Transportation', 'color': Color.BLUE, 'icon': 'fa-car'},
-    {'name': 'Housing', 'color': Color.NAVY, 'icon': 'fa-home'},
-    {'name': 'Utilities', 'color': Color.RED, 'icon': 'fa-lightbulb'},
-    {'name': 'Entertainment', 'color': Color.PURPLE, 'icon': 'fa-film'},
-    {'name': 'Health', 'color': Color.EMERALD, 'icon': 'fa-heartbeat'},
-    {'name': 'Income', 'color': Color.GOLD, 'icon': 'fa-dollar-sign'}
+    # Will be created for each user
+    Category(name='Groceries', color=Color.GREEN, icon='fa-shopping-cart'),
+    Category(name='Dining Out', color=Color.ORANGE_RED, icon='fa-utensils'),
+    Category(name='Transportation', color=Color.BLUE, icon='fa-car'),
+    Category(name='Housing', color=Color.NAVY, icon='fa-home'),
+    Category(name='Utilities', color=Color.RED, icon='fa-lightbulb'),
+    Category(name='Entertainment', color=Color.PURPLE, icon='fa-film'),
+    Category(name='Health', color=Color.EMERALD, icon='fa-heartbeat'),
+    Category(name='Income', color=Color.GOLD, icon='fa-dollar-sign')
 ]
 
 # Label templates
 LABELS = [
-    {'name': 'Essential'},
-    {'name': 'Recurring'},
-    {'name': 'Discretionary'},
-    {'name': 'Work-related'},
-    {'name': 'Tax-deductible'}
+    # Will be created for each user
+    Label(name='Essential'),
+    Label(name='Recurring'),
+    Label(name='Discretionary'),
+    Label(name='Work-related'),
+    Label(name='Tax-deductible')
 ]
 
 # Budget amount ranges by category

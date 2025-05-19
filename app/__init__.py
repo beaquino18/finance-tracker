@@ -2,7 +2,7 @@
 """Initialize the application."""
 from flask import Flask
 from app.config import Config
-from app.extensions import db, login_manager, bcrypt
+from app.extensions import db, login_manager, bcrypt, csrf
 
 def create_app(config_class=Config):
     """Application factory function."""
@@ -13,6 +13,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    csrf.init_app(app)
     
     # Register blueprints
     from app.auth.routes import auth as auth_blueprint

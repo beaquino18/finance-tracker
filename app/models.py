@@ -21,7 +21,6 @@ class Wallet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)  # e.g. "Chase Checking", "Cash", "Amex"
     balance = db.Column(db.Numeric(precision=10, scale=2), nullable=False, default=0.00)
-    color = db.Column(db.Enum(Color), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)  # To hide/show wallets
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())

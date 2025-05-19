@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Budget Details - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Budget Details</h1>
+        <p class="lead">{{ budget.month.value }} {{ budget.year }}</p>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('budget.update', budget_id=budget.id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Budget
+        </a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteBudgetModal">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    </div>
+</div>
+
+<!-- Delete Budget Modal -->
+<div class="modal fade" id="deleteBudgetModal" tabindex="-1" role="dialog" aria-labelledby="deleteBudgetModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteBudgetModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this budget?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('budget.delete', budget_id=budget.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Delete Budget</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Details Card -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Budget Information</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Amount:</strong> ${{ "%.2f"|format(budget.amount) }}</p>
+                <p><strong>Period:</strong> {{ budget.month.value }} {{ budget.year }}</p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <strong>Category:</strong>
+                    <span class="badge">
+                        <i class="fas {{ category.icon }}"></i> {{ category.name }}
+                    </span>
+                </p>
+                <p><strong>Wallet:</strong> {{ wallet.name }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

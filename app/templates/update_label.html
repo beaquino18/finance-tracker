@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Label - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Edit Label: {{ label.name }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('label.update', label_id=label.id) }}">
+                    {{ form.csrf_token }}
+                    
+                    <div class="form-group">
+                        {{ form.name.label }}
+                        {{ form.name(class="form-control", placeholder="Enter label name") }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update Label</button>
+                        <a href="{{ url_for('label.detail', label_id=label.id) }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

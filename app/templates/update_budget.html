@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Budget - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Edit Budget</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('budget.update', budget_id=budget.id) }}">
+                    {{ form.csrf_token }}
+                    
+                    <div class="form-group">
+                        {{ form.amount.label }}
+                        {{ form.amount(class="form-control", placeholder="Enter budget amount") }}
+                        {% if form.amount.errors %}
+                            <div class="text-danger">
+                                {% for error in form.amount.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.month.label }}
+                        {{ form.month(class="form-control") }}
+                        {% if form.month.errors %}
+                            <div class="text-danger">
+                                {% for error in form.month.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.year.label }}
+                        {{ form.year(class="form-control") }}
+                        {% if form.year.errors %}
+                            <div class="text-danger">
+                                {% for error in form.year.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.category_id.label }}
+                        {{ form.category_id(class="form-control") }}
+                        {% if form.category_id.errors %}
+                            <div class="text-danger">
+                                {% for error in form.category_id.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.wallet_id.label }}
+                        {{ form.wallet_id(class="form-control") }}
+                        {% if form.wallet_id.errors %}
+                            <div class="text-danger">
+                                {% for error in form.wallet_id.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update Budget</button>
+                        {% if wallet_id %}
+                            <a href="{{ url_for('wallet.detail', wallet_id=wallet_id) }}" class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

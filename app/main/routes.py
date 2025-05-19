@@ -23,12 +23,12 @@ def homepage():
 @login_required
 def dashboard():
     """Dashboard shows only current user's data"""
-    user_wallets = current_user.wallets.filter_by(is_active=True).all()
-    user_budgets = current_user.budgets.all()
-    user_transactions = current_user.transactions.order_by(
+    user_wallets = Wallet.query.filter_by(user_id=current_user.id, is_active=True).all()
+    user_budgets = Budget.query.filter_by(user_id=current_user.id).all()
+    user_transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(
         Transaction.date.desc()).limit(10).all()
-    user_labels = current_user.labels.all()
-    user_categories = current_user.categories.all()
+    user_labels = Label.query.filter_by(user_id=current_user.id).all()
+    user_categories = Category.query.filter_by(user_id=current_user.id).all()
     
     # Summary Stats
     total_balance = sum(wallet.balance for wallet in user_wallets)

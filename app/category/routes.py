@@ -7,7 +7,7 @@ from app.category.forms import CategoryForm
 from app.extensions import db
 from app.enum import CategoryIcon
 
-category = Blueprint('category', __name__)
+category = Blueprint('category', __name__, url_prefix='/category')
 
 @category.route('/create', methods=['GET', 'POST'])
 @login_required

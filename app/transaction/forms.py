@@ -35,7 +35,7 @@ class TransactionForm(FlaskForm):
       
       # 4. Set the choices for category dropdown
       # Only show active categories belonging to this user
-      self.category_id.choices = [(c.id, c.name) for c in user.categories.filter_by(is_active=True)]
+      self.category_id.choices = [(c.id, c.name) for c in user.categories.all()]
       
       # 5. Set the choices for wallet dropdown
       # Only show active wallets belonging to this user
