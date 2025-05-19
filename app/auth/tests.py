@@ -59,11 +59,6 @@ class AuthTests(TestCase):
         # Create tables
         db.create_all()
         
-        # Debug: Print all registered routes
-        print("\nRegistered routes:")
-        for rule in self.app.url_map.iter_rules():
-            print(f"Route: {rule.rule}, Endpoint: {rule.endpoint}")
-
     def tearDown(self):
         """Executed after each test."""
         # Remove database session
@@ -164,7 +159,7 @@ class AuthTests(TestCase):
         
         # Check error message
         response_text = response.get_data(as_text=True)
-        self.assertIn('No user with that email', response_text)
+        self.assertIn('No user found with that email', response_text)
 
     def test_login_incorrect_password(self):
         """Test login with incorrect password."""

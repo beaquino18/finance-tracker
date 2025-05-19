@@ -5,6 +5,7 @@ from urllib.parse import urlparse, urljoin
 from app.models import User
 from app.auth.forms import SignUpForm, LoginForm
 from app.extensions import db, bcrypt
+import logging
 
 auth = Blueprint("auth", __name__)
 
@@ -80,15 +81,9 @@ def login():
             return redirect(next_page or url_for('main.homepage'))
             
         except Exception as e:
-            # Log the error for debugging
-            import traceback
-            error_details = traceback.format_exc()
-            print(f"Login Error: {str(e)}")
-            print(error_details)
-            
-            # Flash a user-friendly message
+            # Log the error
+            logging.error(f"Login error: {str(e)}")
             flash('An error occurred during login. Please try again.', 'danger')
-            return render_template('login.html', form=form)
     
     # If GET request or form validation failed, display the login form
     return render_template('login.html', form=form)
