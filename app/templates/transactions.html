@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions - Budget Tracker{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/transactions.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="transactions-header">
+        <button class="filter-button" onclick="openFilterModal()">
+            <i class="fas fa-filter"></i> Filter By
+        </button>
+        <div class="balance-display">CA$ {{ "%.2f"|format(total_balance) }}</div>
+        <div class="cash-flow-label">
+            Cash Flow
+            {% if filter_display %}
+                <span style="font-size: 1rem; color: #3498db; display: block; margin-top: 0.5rem;">
+                    <i class="fas fa-filter"></i> 
+                    Filtered: {{ filter_display }}
+                    <a href="{{ url_for('main.transactions') }}" style="color: #e74c3c; margin-left: 1rem; text-decoration: none;">
+                        <i class="fas fa-times-circle"></i> Clear
+                    </a>
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cash Flow Chart -->
+    <div class="transactions-chart-container">
+        <canvas id="cashFlowChart"></canvas>
+    </div>
+
+    <!-- Overview Button -->
+    <button class="overview-button" onclick="window.location.href='{{ url_for('main.dashboard') }}'">
+        Overview
+    </button>
+
+    <!-- Transactions List -->
+    {% for date, transactions in transactions_by_date.items() %}
+        <div class="date-header">{{ date }}</div>
+        
+        {% for transaction in transactions %}
+            <div class="transaction-item" data-transaction-id="{{ transaction.id }}">
+                <div class="transaction-icon">
+                    <i class="fas {{ transaction.category.icon }}"></i>
+                </div>
+                
+                <div class="transaction-details">
+                    <div class="transaction-category">{{ transaction.category.name }}</div>
+                    
+                    {% if transaction.labels %}
+                        <div class="transaction-labels">
+                            {% for label in transaction.labels %}
+                                <span class="label-badge">{{ label.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="transaction-wallet">{{ transaction.wallet.name }}</div>
+                    
+                    {% if transaction.description %}
+                        <div class="transaction-note">{{ transaction.description }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="transaction-amount {{ 'expense' if transaction.is_expense else 'income' }}">
+                    {{ '-' if transaction.is_expense else '+' }}${{ "%.2f"|format(transaction.amount) }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            No transactions found. <a href="{{ url_for('transaction.create') }}">Create your first transaction</a>.
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="filter-modal">
+    <div class="filter-modal-content">
+        <div class="filter-modal-header">
+            <h3>Filter Transactions</h3>
+            <span class="close-modal" onclick="closeFilterModal()">&times;</span>
+        </div>
+        
+        <form method="GET" action="{{ url_for('main.transactions') }}">
+            <div class="form-group">
+                <label>Wallet</label>
+                <select name="wallet_id" class="form-control">
+                    <option value="">All Wallets</option>
+                    {% for wallet in all_wallets %}
+                        <option value="{{ wallet.id }}" {% if wallet.id == current_wallet_id %}selected{% endif %}>
+                            {{ wallet.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category_id" class="form-control">
+                    <option value="">All Categories</option>
+                    {% for category in all_categories %}
+                        <option value="{{ category.id }}" {% if category.id == current_category_id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Label</label>
+                <select name="label_id" class="form-control">
+                    <option value="">All Labels</option>
+                    {% for label in all_labels %}
+                        <option value="{{ label.id }}" {% if label.id == current_label_id %}selected{% endif %}>
+                            {{ label.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                <a href="{{ url_for('main.transactions') }}" class="btn btn-secondary btn-block">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Pass data from Jinja to JavaScript -->
+<script id="chart-data" type="application/json">
+{
+    "months": {{ chart_months | tojson }},
+    "income": {{ chart_income | tojson }},
+    "expense": {{ chart_expense | tojson }}
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    // Get data from JSON script tag
+    const chartDataElement = document.getElementById('chart-data');
+    const chartData = JSON.parse(chartDataElement.textContent);
+
+    // Cash Flow Chart
+    const ctx = document.getElementById('cashFlowChart').getContext('2d');
+    const cashFlowChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.months,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: chartData.income,
+                    backgroundColor: '#7dcea0',
+                    borderRadius: 8,
+                },
+                {
+                    label: 'Expenses',
+                    data: chartData.expense,
+                    backgroundColor: '#c0392b',
+                    borderRadius: 8,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#e0e0e0'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            onClick: function(event, activeElements) {
+                if (activeElements.length > 0) {
+                    const index = activeElements[0].index;
+                    const selectedMonth = chartData.months[index];
+                    
+                    // Parse month and year from "Aug 2025" format
+                    const monthNames = {
+                        'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 
+                        'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8,
+                        'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+                    };
+                    
+                    const parts = selectedMonth.split(' ');
+                    const monthName = parts[0];
+                    const year = parts[1];
+                    const monthNumber = monthNames[monthName];
+                    
+                    // Redirect to filtered transactions page
+                    window.location.href = '/transactions?month=' + monthNumber + '&year=' + year;
+                }
+            }
+        }
+    });
+
+    // Transaction click handler using event delegation
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('.container');
+        
+        container.addEventListener('click', function(event) {
+            const transactionItem = event.target.closest('.transaction-item');
+            if (transactionItem) {
+                const transactionId = transactionItem.dataset.transactionId;
+                if (transactionId) {
+                    window.location.href = '/transaction/' + transactionId;
+                }
+            }
+        });
+    });
+
+    // Filter Modal Functions
+    function openFilterModal() {
+        document.getElementById('filterModal').style.display = 'block';
+    }
+
+    function closeFilterModal() {
+        document.getElementById('filterModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('filterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
+{% endblock %}

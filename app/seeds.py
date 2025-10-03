@@ -168,10 +168,10 @@ def add_budgets():
         print("Error adding budgets: IntegrityError")
 
 def add_transactions():
-    """Add sample transactions for all users."""
-    # Generate date range for transactions
+    """Add sample transactions for all users spanning 6 months."""
+    # Generate date range for transactions (last 6 months)
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=30)
+    start_date = end_date - timedelta(days=180)  # 6 months ago
     
     users = User.query.all()
     transactions_to_add = []
@@ -187,57 +187,70 @@ def add_transactions():
         if not categories or not wallets:
             continue
         
-        # Generate 20-30 transactions per user
-        num_transactions = random.randint(20, 30)
+        # Generate 60-80 transactions per user (about 10-13 per month)
+        num_transactions = random.randint(60, 80)
         
-        for i in range(num_transactions):
-            # Random date within range
-            transaction_date = start_date + timedelta(days=random.randint(0, 30))
+        # Create a balanced distribution across 6 months
+        transactions_per_month = num_transactions // 6
+        
+        for month_offset in range(6):
+            # Calculate month boundaries
+            month_start = start_date + timedelta(days=30 * month_offset)
+            month_end = month_start + timedelta(days=30)
             
-            # Randomly select category and wallet
-            category = random.choice(categories)
-            wallet = random.choice(wallets)
-            
-            # Determine if expense or income
-            is_expense = category.name != 'Income'
-            
-            # Generate amount based on category
-            amount_range = TRANSACTION_AMOUNTS.get(category.name, TRANSACTION_AMOUNTS['Default'])
-            amount = round(random.uniform(*amount_range), 2)
-            
-            # Generate description
-            description_list = TRANSACTION_DESCRIPTIONS.get(category.name, TRANSACTION_DESCRIPTIONS['Default'])
-            description = random.choice(description_list)
-            
-            # Create transaction
-            transaction = Transaction(
-                amount=amount,
-                description=description,
-                date=transaction_date.date(),
-                is_expense=is_expense,
-                category_id=category.id,
-                wallet_id=wallet.id,
-                user_id=user.id
-            )
-            
-            transactions_to_add.append(transaction)
-            
-            # Track balance updates for each wallet
-            if wallet.id not in wallet_balance_updates:
-                wallet_balance_updates[wallet.id] = 0
+            # Generate transactions for this month
+            for i in range(transactions_per_month):
+                # Random date within this month
+                days_offset = random.randint(0, 29)
+                transaction_date = month_start + timedelta(days=days_offset)
                 
-            # Update the balance tracking
-            if is_expense:
-                wallet_balance_updates[wallet.id] -= amount
-            else:
-                wallet_balance_updates[wallet.id] += amount
-            
-            # Prepare labels for this transaction (we'll add them after commit)
-            if labels:
-                num_labels = random.randint(0, min(2, len(labels)))
-                if num_labels > 0:
+                # Make sure we don't go beyond current date
+                if transaction_date > end_date:
+                    transaction_date = end_date - timedelta(days=random.randint(0, 7))
+                
+                # Randomly select category and wallet
+                category = random.choice(categories)
+                wallet = random.choice(wallets)
+                
+                # Determine if expense or income (80% expenses, 20% income)
+                is_income_category = category.name == 'Income'
+                is_expense = not is_income_category and random.random() > 0.2
+                
+                # Generate amount based on category
+                amount_range = TRANSACTION_AMOUNTS.get(category.name, TRANSACTION_AMOUNTS['Default'])
+                amount = round(random.uniform(*amount_range), 2)
+                
+                # Generate description
+                description_list = TRANSACTION_DESCRIPTIONS.get(category.name, TRANSACTION_DESCRIPTIONS['Default'])
+                description = random.choice(description_list)
+                
+                # Create transaction
+                transaction = Transaction(
+                    amount=amount,
+                    description=description,
+                    date=transaction_date.date(),
+                    is_expense=is_expense,
+                    category_id=category.id,
+                    wallet_id=wallet.id,
+                    user_id=user.id
+                )
+                
+                transactions_to_add.append(transaction)
+                
+                # Track balance updates for each wallet
+                if wallet.id not in wallet_balance_updates:
+                    wallet_balance_updates[wallet.id] = 0
+                    
+                # Update the balance tracking
+                if is_expense:
+                    wallet_balance_updates[wallet.id] -= amount
+                else:
+                    wallet_balance_updates[wallet.id] += amount
+                
+                # Prepare labels for this transaction (30% chance of having labels)
+                if labels and random.random() < 0.3:
+                    num_labels = random.randint(1, min(2, len(labels)))
                     selected_labels = random.sample(labels, num_labels)
-                    # Store the transaction and its labels to add after commit
                     transaction_label_pairs.append((transaction, selected_labels))
     
     try:
