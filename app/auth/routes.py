@@ -48,7 +48,7 @@ def login():
     """Handle user login with error handling and logging."""
     # Redirect if user is already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('main.homepage'))
+        return redirect(url_for('main.dashboard'))
         
     form = LoginForm()
     

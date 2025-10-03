@@ -9,15 +9,8 @@ main = Blueprint('main', __name__)
 def index():
     """Landing page for non-authenticated users."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.homepage'))
+        return redirect(url_for('main.dashboard'))
     return render_template('index.html')
-
-@main.route('/home')
-@login_required
-def homepage():
-    """Homepage for authenticated users - shows user info and wallets."""
-    wallets = Wallet.query.filter_by(user_id=current_user.id).all()
-    return render_template('home.html', wallets=wallets)
 
 @main.route('/dashboard')
 @login_required

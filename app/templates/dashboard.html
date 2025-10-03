@@ -18,9 +18,6 @@
 <div class="card mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Your Wallets</h3>
-        <a href="{{ url_for('wallet.create') }}" class="btn btn-light btn-sm">
-            <i class="fas fa-plus"></i> Add Wallet
-        </a>
     </div>
     <div class="card-body">
         {% if wallets %}
@@ -53,9 +50,6 @@
 <div class="card mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Recent Transactions</h3>
-        <a href="{{ url_for('transaction.create') }}" class="btn btn-light btn-sm">
-            <i class="fas fa-plus"></i> Add Transaction
-        </a>
     </div>
     <div class="card-body">
         {% if recent_transactions %}
@@ -110,9 +104,6 @@
         <div class="card mb-4">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Your Categories</h3>
-                <a href="{{ url_for('category.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus"></i> Add Category
-                </a>
             </div>
             <div class="card-body">
                 {% if categories %}
@@ -146,9 +137,6 @@
         <div class="card mb-4">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Your Labels</h3>
-                <a href="{{ url_for('label.create') }}" class="btn btn-light btn-sm">
-                    <i class="fas fa-plus"></i> Add Label
-                </a>
             </div>
             <div class="card-body">
                 {% if labels %}

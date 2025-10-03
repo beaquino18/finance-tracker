@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.homepage') }}">Budget Tracker</a>
+            <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">FinFlow</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -21,10 +21,29 @@
                 <ul class="navbar-nav ml-auto">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.homepage') }}">Home</a>
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">Transactions</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+                                role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Create
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ url_for('wallet.create') }}">Create Wallet</a>
+                                <a class="dropdown-item" href="{{ url_for('transaction.create') }}">Create Transaction</a>
+                                <a class="dropdown-item" href="{{ url_for('budget.create') }}">Create Budget</a>
+                                <a class="dropdown-item" href="{{ url_for('category.create') }}">Create Category</a>
+                                <a class="dropdown-item" href="{{ url_for('label.create') }}">Create Label</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Budget</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">More</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
