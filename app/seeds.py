@@ -120,10 +120,11 @@ def add_labels():
         print("Error adding labels: IntegrityError")
 
 def add_budgets():
-    """Add sample budgets for all users."""
-    # Get current month and year
-    current_month = datetime.now().month
-    current_year = datetime.now().year
+    """Add sample budgets for all users across multiple months."""
+    # Get current date
+    current_date = datetime.now()
+    current_month = current_date.month
+    current_year = current_date.year
     
     users = User.query.all()
     budgets_to_add = []
@@ -136,28 +137,40 @@ def add_budgets():
         if not categories or not wallets:
             continue
         
-        # Randomly select a wallet for all budgets
-        wallet = random.choice(wallets)
+        # Create budgets for current month and previous 2 months
+        months_to_create = [
+            (current_month - 2 if current_month > 2 else 12 + current_month - 2, current_year if current_month > 2 else current_year - 1),
+            (current_month - 1 if current_month > 1 else 12, current_year if current_month > 1 else current_year - 1),
+            (current_month, current_year)
+        ]
         
-        for category in categories:
-            # Skip income category for budgeting
-            if category.name == 'Income':
-                continue
+        for month, year in months_to_create:
+            # For each month, create budgets for 3-5 random categories
+            num_budgets = random.randint(3, min(5, len(categories)))
+            selected_categories = random.sample(categories, num_budgets)
             
-            # Generate budget amount based on category
-            amount_range = BUDGET_AMOUNTS.get(category.name, BUDGET_AMOUNTS['Default'])
-            amount = round(random.uniform(*amount_range), 2)
-            
-            # Create budget
-            budget = Budget(
-                amount=amount,
-                month=MONTH_MAPPING[current_month],
-                year=current_year,
-                category_id=category.id,
-                wallet_id=wallet.id,
-                user_id=user.id
-            )
-            budgets_to_add.append(budget)
+            for category in selected_categories:
+                # Skip income category for budgeting
+                if category.name == 'Income':
+                    continue
+                
+                # Randomly select a wallet for this budget
+                wallet = random.choice(wallets)
+                
+                # Generate budget amount based on category
+                amount_range = BUDGET_AMOUNTS.get(category.name, BUDGET_AMOUNTS['Default'])
+                amount = round(random.uniform(*amount_range), 2)
+                
+                # Create budget
+                budget = Budget(
+                    amount=amount,
+                    month=MONTH_MAPPING[month],
+                    year=year,
+                    category_id=category.id,
+                    wallet_id=wallet.id,
+                    user_id=user.id
+                )
+                budgets_to_add.append(budget)
     
     try:
         db.session.add_all(budgets_to_add)

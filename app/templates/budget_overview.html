@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Budget Overview - Budget Tracker{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/budget.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="budget-container">
+    <div class="budget-header">
+        <h1>Budgets</h1>
+        <button class="filter-toggle-btn" onclick="openBudgetFilterModal()">
+            <i class="fas fa-filter"></i> Filter
+        </button>
+    </div>
+
+    <!-- Budget Cards -->
+    {% if budgets %}
+        {% for budget in budgets %}
+            <div class="budget-card">
+                <div class="budget-title">
+                    <i class="fas {{ budget.category.icon }}"></i>
+                    {{ budget.category.name }}
+                </div>
+                <div class="budget-subtitle">
+                    {{ budget.wallet.name }} • {{ budget.month }} {{ budget.year }}
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill budget-{{ budget.id }}-fill">
+                            {{ budget.percentage }}%
+                        </div>
+                    </div>
+                    <div class="progress-dates">
+                        <span>{{ budget.month }} {{ budget.month_start }}, {{ budget.year }}</span>
+                        <span>{{ budget.month }} {{ budget.month_end }}, {{ budget.year }}</span>
+                    </div>
+                </div>
+
+                {% if budget.status == 'over' %}
+                    <div class="amount-subtitle status-over">
+                        C${{ "%.2f"|format(budget.spent - budget.amount) }} spent over C${{ "%.2f"|format(budget.amount) }}
+                    </div>
+                {% else %}
+                    <div class="amount-subtitle status-normal">
+                        C${{ "%.2f"|format(budget.remaining) }} left out of C${{ "%.2f"|format(budget.amount) }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-budgets">
+            <i class="fas fa-chart-pie"></i>
+            <p>No budgets found for the selected period.</p>
+            <a href="{{ url_for('budget.create') }}" class="btn-create">
+                <i class="fas fa-plus"></i> Create Budget
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Filter Modal -->
+<div id="budgetFilterModal" class="budget-filter-modal">
+    <div class="budget-filter-modal-content">
+        <div class="budget-filter-modal-header">
+            <h3>Filter Budgets</h3>
+            <span class="budget-close-modal" onclick="closeBudgetFilterModal()">&times;</span>
+        </div>
+        
+        <form method="GET" action="{{ url_for('budget.overview') }}">
+            <div class="form-group">
+                <label for="modal-month">Month</label>
+                <select name="month" id="modal-month" class="form-control">
+                    {% for month in months %}
+                        <option value="{{ month.num }}" {% if month.num == selected_month %}selected{% endif %}>
+                            {{ month.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="modal-year">Year</label>
+                <select name="year" id="modal-year" class="form-control">
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="modal-wallet">Wallet</label>
+                <select name="wallet_id" id="modal-wallet" class="form-control">
+                    <option value="">All Wallets</option>
+                    {% for wallet in wallets %}
+                        <option value="{{ wallet.id }}" {% if wallet.id == selected_wallet_id %}selected{% endif %}>
+                            {{ wallet.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                <a href="{{ url_for('budget.overview') }}" class="btn btn-secondary btn-block">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openBudgetFilterModal() {
+        document.getElementById('budgetFilterModal').style.display = 'block';
+    }
+
+    function closeBudgetFilterModal() {
+        document.getElementById('budgetFilterModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('budgetFilterModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
+
+<style>
+    /* Dynamic styles for each budget's progress bar */
+    {% for budget in budgets %}
+    .budget-{{ budget.id }}-fill {
+        width: {{ [budget.percentage, 100]|min }}%;
+        background-color: {{ budget.color }};
+    }
+    {% endfor %}
+</style>
+{% endblock %}
