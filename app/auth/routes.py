@@ -19,7 +19,7 @@ def is_safe_url(target):
 def signup():
     # Redirect if user is already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('main.homepage'))
+        return redirect(url_for('main.dashboard'))
         
     form = SignUpForm()
     if form.validate_on_submit():
@@ -38,7 +38,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
         
-        flash('Account Created Successfully.')
+        flash('Account Created Successfully.', 'success')
         return redirect(url_for('auth.login'))
         
     return render_template('signup.html', form=form)
@@ -71,19 +71,20 @@ def login():
             login_user(user, remember=True)
             flash(f'Welcome back, {user.first_name}!', 'success')
             
-            # Get the next page or default to homepage
+            # Get the next page or default to dashboard
             next_page = request.args.get('next')
             
             # Validate next_page is safe (prevent open redirect vulnerability)
             if next_page and not is_safe_url(next_page):
-                return redirect(url_for('main.homepage'))
+                return redirect(url_for('main.dashboard'))
                 
-            return redirect(next_page or url_for('main.homepage'))
+            return redirect(next_page or url_for('main.dashboard'))
             
         except Exception as e:
             # Log the error
             logging.error(f"Login error: {str(e)}")
             flash('An error occurred during login. Please try again.', 'danger')
+            return render_template('login.html', form=form)
     
     # If GET request or form validation failed, display the login form
     return render_template('login.html', form=form)
@@ -92,5 +93,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('You have been logged out.', 'success')
     return redirect(url_for('main.index'))

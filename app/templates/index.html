@@ -32,11 +32,7 @@
                 <div class="feature-column spend-column">
                     <div class="feature-title-large left">SPEND</div>
                     <div class="feature-content">
-                        <div class="credit-card">
-                            <div class="card-chip"></div>
-                            <div class="card-number">•••• 4829</div>
-                            <div class="card-brand">VISA</div>
-                        </div>
+                        <img src="{{ url_for('static', filename='images/credit-card.svg') }}" class="feature-img credit-card-img" alt="Credit Card image">
                     </div>
                 </div>
                 
@@ -44,17 +40,7 @@
                 <div class="feature-column track-column">
                     <div class="feature-title-large right">TRACK</div>
                     <div class="feature-content">
-                        <div class="chart-container">
-                            <div class="pie-chart">
-                                <div class="slice slice-1"></div>
-                                <div class="slice slice-2"></div>
-                                <div class="slice slice-3"></div>
-                            </div>
-                            <div class="chart-value">
-                                <span class="amount">$3,247</span>
-                                <span class="period">this month</span>
-                            </div>
-                        </div>
+                        <img src="{{ url_for('static', filename='images/chart.svg') }}" class="feature-img chart-img" alt="Pie chart with labels">
                     </div>
                 </div>
                 
@@ -62,15 +48,7 @@
                 <div class="feature-column save-column">
                     <div class="feature-title-large left">SAVE</div>
                     <div class="feature-content">
-                        <div class="savings-visual">
-                            <div class="progress-ring">
-                                <div class="progress-fill"></div>
-                            </div>
-                            <div class="savings-amount">
-                                <span class="percentage">78%</span>
-                                <span class="goal">Goal reached</span>
-                            </div>
-                        </div>
+                        <img src="{{ url_for('static', filename='images/save.svg') }}" class="feature-img save-img" alt="Money on Jars">
                     </div>
                 </div>
             </div>

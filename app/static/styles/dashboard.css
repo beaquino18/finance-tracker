@@ -1,0 +1,16 @@
+
+/* Wallet cards: just a left border + small hover */
+.wallet-card {
+  --accent: #007bff;
+  border-left: 5px solid var(--accent);
+  border-radius: 8px;
+}
+
+.wallet-card:hover {
+  border-left-width: 6px;
+}
+
+.table td.amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

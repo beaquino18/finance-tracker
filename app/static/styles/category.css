@@ -1,0 +1,271 @@
+/* app/static/styles/category.css */
+
+/* Category Picker Styles */
+.color-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.color-option {
+    width: 100%;
+    height: 80px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-option.selected {
+    border-color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.color-option.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.icon-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.icon-option {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    background: white;
+}
+
+.icon-option:hover {
+    background: #f5f5f5;
+    border-color: #007bff;
+}
+
+.icon-option.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+.icon-option i {
+    font-size: 2rem;
+}
+
+.icon-option .icon-label {
+    font-size: 0.75rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.preview-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.preview-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.8rem;
+}
+
+.preview-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-section {
+    margin: 30px 0;
+}
+
+.modal-section h4 {
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Dashboard Category Display */
+.category-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 auto 0.5rem auto;
+}
+
+.category-card {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    text-decoration: none;
+}
+
+.category-card .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s;
+}
+
+.category-card:hover .card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.category-name {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .color-picker-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .color-option {
+        height: 60px;
+    }
+    
+    .icon-picker-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    
+    .icon-option {
+        padding: 15px;
+    }
+    
+    .icon-option i {
+        font-size: 1.5rem;
+    }
+    
+    .preview-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .preview-text {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .color-picker-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .icon-picker-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .modal-section h4 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Accessibility */
+.color-option:focus,
+.icon-option:focus {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Scrollbar styling for icon picker */
+.icon-picker-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.icon-picker-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.icon-picker-grid::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.icon-picker-grid::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Print styles */
+@media print {
+    .color-picker-grid,
+    .icon-picker-grid {
+        display: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .color-option,
+    .icon-option {
+        border-width: 3px;
+    }
+    
+    .color-option.selected,
+    .icon-option.selected {
+        border-width: 4px;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .color-option,
+    .icon-option,
+    .category-card {
+        transition: none;
+    }
+    
+    .color-option:hover,
+    .icon-option:hover,
+    .category-card:hover {
+        transform: none;
+    }
+}

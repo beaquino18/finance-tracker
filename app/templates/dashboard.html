@@ -2,6 +2,11 @@
 
 {% block title %}Dashboard - Budget Tracker{% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/category.css') }}">
+
+{% endblock %}
+
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-6">
@@ -21,10 +26,12 @@
     </div>
     <div class="card-body">
         {% if wallets %}
+            {% set colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'] %}
             <div class="row">
                 {% for wallet in wallets %}
+                    {% set color = colors[loop.index0 % colors|length] %}
                     <div class="col-md-4 mb-3">
-                        <div class="card h-100" style="border-left: 5px solid;">
+                        <div class="card h-100" style="border-left: 5px solid {{ color }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ wallet.name }}</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">
@@ -71,8 +78,11 @@
                                 <td>{{ transaction.date.strftime('%Y-%m-%d') }}</td>
                                 <td>{{ transaction.description }}</td>
                                 <td>
-                                    <span class="badge">
-                                        <i class="fas {{ transaction.category.icon }}"></i> {{ transaction.category.name }}
+                                    <span class="badge badge-light d-inline-flex align-items-center" style="padding: 5px 10px;">
+                                        <span class="category-icon-small d-inline-flex align-items-center justify-content-center mr-2" style="background-color: {{ transaction.category.color.value }}; width: 24px; height: 24px; border-radius: 50%;">
+                                            <i class="fas {{ transaction.category.icon }}" style="color: white; font-size: 0.75rem;"></i>
+                                        </span>
+                                        {{ transaction.category.name }}
                                     </span>
                                 </td>
                                 <td>{{ transaction.wallet.name }}</td>
@@ -109,14 +119,14 @@
                 {% if categories %}
                     <div class="row">
                         {% for category in categories %}
-                            <div class="col-6 col-md-4 mb-2">
-                                <a href="{{ url_for('category.detail', category_id=category.id) }}" class="text-decoration-none">
+                            <div class="col-6 col-md-4 mb-3">
+                                <a href="{{ url_for('category.detail', category_id=category.id) }}" class="category-card">
                                     <div class="card border-0">
                                         <div class="card-body text-center p-2">
-                                            <span class="d-inline-block rounded-circle p-3 mb-2">
-                                                <i class="fas {{ category.icon }} fa-lg text-white"></i>
-                                            </span>
-                                            <p class="mb-0">{{ category.name }}</p>
+                                            <div class="category-icon-circle" style="background-color: {{ category.color.value }};">
+                                                <i class="fas {{ category.icon }}"></i>
+                                            </div>
+                                            <p class="category-name mb-0">{{ category.name }}</p>
                                         </div>
                                     </div>
                                 </a>
