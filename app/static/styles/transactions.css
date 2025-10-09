@@ -13,7 +13,7 @@
 
 .cash-flow-label {
     font-size: 1.5rem;
-    color: #95a5a6;
+    color: #64748b; /* Fixed: Changed from #95a5a6 for better contrast */
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -211,7 +211,7 @@
 }
 
 .transaction-amount.income {
-    color: #27ae60;
+    color: #047857; /* Fixed: Changed from #27ae60 to match dashboard .text-success */
 }
 
 .filter-modal {

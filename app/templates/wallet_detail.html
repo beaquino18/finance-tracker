@@ -2,6 +2,12 @@
 
 {% block title %}{{ wallet.name }} - Budget Tracker{% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/update.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/wallet_detail.css') }}">
+
+{% endblock %} 
+
 {% block content %}
 <div class="container">
     <div class="row mb-4">
@@ -119,8 +125,12 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge">
-                                    <i class="fas {{ transaction.category.icon }}"></i> {{ transaction.category.name }}
+                                <span class="badge badge-light d-inline-flex align-items-center" style="padding: 5px 10px;">
+                                    <span class="category-icon-small d-inline-flex align-items-center justify-content-center mr-2" 
+                                        style="background-color: {{ transaction.category.color.value }}; width: 24px; height: 24px; border-radius: 50%;">
+                                        <i class="fas {{ transaction.category.icon }}" style="color: white; font-size: 0.75rem;"></i>
+                                    </span>
+                                    {{ transaction.category.name }}
                                 </span>
                             </td>
                             <td class="{{ 'text-success' if not transaction.is_expense else 'text-danger' }}">
@@ -182,15 +192,4 @@
 </div>
 {% endblock %}
 
-{% block styles %}
-<style>
-    .color-dot {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 5px;
-        vertical-align: middle;
-    }
-</style>
-{% endblock %} 
+

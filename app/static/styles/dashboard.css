@@ -1,16 +1,53 @@
-
-/* Wallet cards: just a left border + small hover */
 .wallet-card {
-  --accent: #007bff;
-  border-left: 5px solid var(--accent);
-  border-radius: 8px;
+    --accent: #007bff;
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
 }
 
 .wallet-card:hover {
-  border-left-width: 6px;
+    border-left-width: 6px;
 }
 
 .table td.amount {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-primary {
+    background-color: #1e40af !important;
+    border-color: #1e40af !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #1e3a8a !important;
+    border-color: #1e3a8a !important;
+    color: #ffffff !important;
+}
+
+.badge-info {
+    background-color: #0c4a6e !important;
+    color: #ffffff !important;
+}
+
+.btn-info {
+    background-color: #0c4a6e !important;
+    border-color: #0c4a6e !important;
+    color: #ffffff !important;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #075985 !important;
+    border-color: #075985 !important;
+    color: #ffffff !important;
+}
+
+.text-success {
+    color: #047857 !important;
+}
+
+.text-danger {
+    color: #dc2626 !important;
 }

@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}{{ category.name }} - Budget Tracker{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/create.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-8">
