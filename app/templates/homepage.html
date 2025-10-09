@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Homepage - Budget Tracker{% endblock %}
+{% block styles %}
+<style>
+    .stat-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+    .wallet-icon, .category-icon, .budget-icon {
+        width: 30px;
+        text-align: center;
+        margin-right: 10px;
+    }
+    .action-btn {
+        border-radius: 20px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+    .display-amount {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    .section-title {
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Header Section -->
+<div class="row align-items-center mb-4">
+    <div class="col-lg-6">
+        <h1 class="display-4">Welcome, {{ current_user.first_name }}!</h1>
+        <p class="lead text-muted">Your financial dashboard as of {% now 'local', '%B %d, %Y' %}</p>
+    </div>
+    <div class="col-lg-6 text-lg-right">
+        <h2 class="mb-0">Total Balance: <span class="text-primary">${{ "%.2f"|format(total_balance|default(0)) }}</span></h2>
+        <p class="text-muted">Across {{ active_wallets_count|default(0) }} active wallet{% if active_wallets_count != 1 %}s{% endif %}</p>
+    </div>
+</div>
+<!-- Quick Stats Section -->
+<div class="row mb-5">
+    <!-- Active Wallets -->
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card bg-primary text-white h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-wallet fa-3x mb-3"></i>
+                <h5 class="card-title">Active Wallets</h5>
+                <h2 class="display-4 mb-3">{{ active_wallets_count|default(0) }}</h2>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-light action-btn">
+                    <i class="fas fa-plus"></i> Add Wallet
+                </a>
+            </div>
+        </div>
+    </div>

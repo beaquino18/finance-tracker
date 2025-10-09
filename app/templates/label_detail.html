@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ label.name }} - Budget Tracker{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>
+            <i class="fas fa-tag"></i>
+            {{ label.name }}
+        </h1>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ url_for('label.update', label_id=label.id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Label
+        </a>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteLabelModal">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    </div>
+</div>
+
+<!-- Delete Label Modal -->
+<div class="modal fade" id="deleteLabelModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteLabelModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the label "{{ label.name }}"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+                {% if transactions %}
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> This label is used by {{ transactions|length }} transaction(s). You must remove these associations first.
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('label.delete', label_id=label.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger" {% if transactions %}disabled{% endif %}>Delete Label</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Label Details Card -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Label Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Name:</strong> {{ label.name }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Created:</strong> {{ label.created_at.strftime('%Y-%m-%d') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transactions Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Transactions with this Label</h3>
+    </div>
+    <div class="card-body">
+        {% if transactions %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Wallet</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ transaction.description }}</td>
+                                <td>
+                                    <span class="badge">
+                                        <i class="fas {{ transaction.category.icon }}"></i> {{ transaction.category.name }}
+                                    </span>
+                                </td>
+                                <td>{{ transaction.wallet.name }}</td>
+                                <td class="{{ 'text-success' if not transaction.is_expense else 'text-danger' }}">
+                                    {{ "+" if not transaction.is_expense else "-" }}${{ "%.2f"|format(transaction.amount) }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('transaction.detail', transaction_id=transaction.id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('transaction.update', transaction_id=transaction.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No transactions are using this label.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

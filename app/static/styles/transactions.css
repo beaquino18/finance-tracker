@@ -1,0 +1,368 @@
+.transactions-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.balance-display {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.cash-flow-label {
+    font-size: 1.5rem;
+    color: #64748b; /* Fixed: Changed from #95a5a6 for better contrast */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Smaller Filter Button */
+.filter-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #e0e0e0;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+    background-color: #d0d0d0;
+}
+
+.transactions-chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    height: 300px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.transactions-chart-container canvas {
+    cursor: pointer;
+}
+
+/* Smaller Overview Button */
+.overview-button {
+    display: block;
+    width: 150px;
+    margin: 1.5rem auto;
+    padding: 0.5rem 1.5rem;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.overview-button:hover {
+    background-color: #d0d0d0;
+}
+
+/* Date Header - Color coded by wallet */
+.transaction-date-group {
+    margin-bottom: 2rem;
+}
+.date-header {
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+    color: black;
+    background-color: #ffc4a3;
+}
+
+/* Wallet-specific colors */
+.date-header.cash-wallet {
+    background-color: #ff6f00;
+}
+
+.date-header.checking-account {
+    background-color: #80d8ff;
+    color: #333;
+}
+
+.date-header.savings-account {
+    background-color: #ffd700;
+    color: #333;
+}
+
+.date-header.credit-card {
+    background-color: #ffc4a3;
+    color: #333;
+}
+
+.transaction-item {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.transaction-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Transaction Icon - Uses category color and icon */
+.transaction-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.transaction-icon[data-category-color] {
+    background-color: var(--category-color);
+}
+
+.transaction-icon i {
+    color: white;
+    font-size: 1.8rem;
+}
+
+.transaction-details {
+    flex-grow: 1;
+}
+
+.transaction-category {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.transaction-labels {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.label-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.transaction-wallet {
+    font-weight: 600;
+    color: black;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.transaction-wallet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+.transaction-wallet-badge[data-wallet-color] {
+    background-color: var(--wallet-color);
+    color: black;
+}
+
+.transaction-note {
+    color: black;
+    font-size: 0.9rem;
+}
+
+.transaction-amount {
+    font-size: 1.8rem;
+    font-weight: 900;
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+.transaction-amount.expense {
+    color: #e74c3c;
+}
+
+.transaction-amount.income {
+    color: #047857; /* Fixed: Changed from #27ae60 to match dashboard .text-success */
+}
+
+.filter-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.filter-modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.filter-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.close-modal {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .transactions-header {
+        padding: 0 1rem;
+    }
+
+    .balance-display {
+        font-size: 2.2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cash-flow-label {
+        font-size: 1rem;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+
+    .filter-button {
+        position: static;
+        display: block;
+        margin: 1rem auto 0 auto;
+        width: auto;
+        min-width: 120px;
+    }
+
+    .transaction-item {
+        padding: 1rem;
+    }
+
+    .transaction-icon {
+        width: 50px;
+        height: 50px;
+        margin-right: 1rem;
+    }
+
+    .transaction-icon i {
+        font-size: 1.5rem;
+    }
+
+    .transaction-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+    }
+
+    .transaction-category {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+
+    .transaction-note {
+        font-size: 1rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .transaction-amount {
+        font-size: 1.5rem;
+        margin-left: 0.5rem;
+        align-self: flex-start;
+    }
+
+    .transactions-chart-container {
+        height: 300px;
+        padding: 1rem;
+    }
+
+    .date-header {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .balance-display {
+        font-size: 1.8rem;
+    }
+
+    .cash-flow-label {
+        font-size: 0.9rem;
+    }
+
+    .transaction-icon {
+        width: 45px;
+        height: 45px;
+        margin-right: 0.75rem;
+    }
+
+    .transaction-icon i {
+        font-size: 1.3rem;
+    }
+
+    .transaction-category {
+        font-size: 1.2rem;
+    }
+
+    .transaction-note {
+        font-size: 0.9rem;
+    }
+
+    .transaction-amount {
+        font-size: 1.3rem;
+    }
+
+    .transaction-wallet-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .label-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+}

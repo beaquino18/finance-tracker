@@ -1,0 +1,679 @@
+/* Budget Overview Page Styles */
+
+.budget-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.budget-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.budget-header h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.filter-toggle-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #e0e0e0;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-toggle-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.filter-toggle-btn i {
+    font-size: 1rem;
+}
+
+/* Filter Section */
+.filter-section {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.filter-form {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: end;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 130px;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-filter {
+    padding: 0.5rem 1.25rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.btn-filter:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-clear {
+    padding: 0.5rem 1.25rem;
+    background: #64748b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.btn-clear:hover {
+    background: #475569;
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+/* Budget Cards */
+.budget-card {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+
+.budget-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.budget-title-link {
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+}
+
+.budget-title-link:hover {
+    text-decoration: none;
+}
+
+.budget-title-link:hover .budget-title {
+    color: #2563eb;
+}
+
+.budget-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+}
+
+.budget-title i {
+    color: #3b82f6;
+    font-size: 1.1rem;
+}
+
+.budget-subtitle {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+/* Budget Amounts */
+.budget-amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+}
+
+.amount-item {
+    text-align: center;
+    flex: 1;
+}
+
+.amount-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.amount-value {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.amount-value.spent {
+    color: #dc2626;
+}
+
+.amount-value.remaining {
+    color: #10b981;
+}
+
+.amount-value.total {
+    color: #3b82f6;
+}
+
+/* Progress Bar */
+.progress-container {
+    position: relative;
+    margin: 1rem 0 0.75rem 0;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 32px;
+    background: #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 16px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    min-width: 50px;
+}
+
+.progress-dates {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.amount-subtitle {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.amount-subtitle.status-over {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.amount-subtitle.status-normal {
+    color: #64748b;
+}
+
+/* Budget Actions */
+.budget-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.budget-delete-form {
+    display: inline;
+}
+
+.btn-edit, .btn-delete {
+    padding: 0.4rem 0.875rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+}
+
+.btn-edit {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-delete {
+    background: #dc2626;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* No Budgets State */
+.no-budgets {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.no-budgets i {
+    font-size: 4rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+
+.no-budgets p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-create {
+    padding: 0.75rem 2rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-create:hover {
+    background: #059669;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .budget-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .budget-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .budget-header h1 {
+        font-size: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .filter-toggle-btn {
+        position: static;
+        display: block;
+        margin: 0 auto;
+        width: auto;
+    }
+
+    .budget-amounts {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .amount-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem;
+        background: #f8fafc;
+        border-radius: 6px;
+    }
+
+    .amount-label {
+        text-align: left;
+        margin-bottom: 0;
+    }
+
+    .filter-form {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .filter-buttons {
+        width: 100%;
+    }
+
+    .btn-filter, .btn-clear {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .budget-card {
+        padding: 1rem;
+    }
+
+    .budget-title {
+        font-size: 1.1rem;
+    }
+
+    .progress-bar-fill {
+        font-size: 0.75rem;
+    }
+
+    .budget-actions {
+        flex-wrap: wrap;
+    }
+
+    .btn-edit, .btn-delete {
+        flex: 1;
+        justify-content: center;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 576px) {
+    .budget-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .filter-section {
+        padding: 1rem;
+    }
+
+    .budget-card {
+        padding: 0.875rem;
+    }
+
+    .budget-title {
+        font-size: 1rem;
+    }
+
+    .budget-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .amount-value {
+        font-size: 0.95rem;
+    }
+
+    .progress-bar-bg {
+        height: 28px;
+    }
+
+    .progress-bar-fill {
+        font-size: 0.7rem;
+        min-width: 40px;
+    }
+
+    .no-budgets {
+        padding: 2rem 1rem;
+    }
+
+    .no-budgets i {
+        font-size: 3rem;
+    }
+}
+
+/* Accessibility */
+.btn-filter:focus,
+.btn-clear:focus,
+.btn-edit:focus,
+.btn-delete:focus,
+.btn-create:focus,
+.filter-group select:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .budget-card {
+        border: 2px solid #1e293b;
+    }
+
+    .filter-section {
+        border: 2px solid #1e293b;
+    }
+
+    .filter-group select {
+        border: 2px solid #1e293b;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .budget-card,
+    .btn-filter,
+    .btn-clear,
+    .btn-edit,
+    .btn-delete,
+    .btn-create,
+    .progress-bar-fill,
+    .filter-group select {
+        transition: none;
+    }
+
+    .budget-card:hover,
+    .btn-filter:hover,
+    .btn-clear:hover,
+    .btn-edit:hover,
+    .btn-delete:hover,
+    .btn-create:hover {
+        transform: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .filter-section,
+    .budget-actions,
+    .navbar,
+    .filter-toggle-btn,
+    .budget-filter-modal {
+        display: none;
+    }
+
+    .budget-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
+    }
+
+    .budget-container {
+        max-width: 100%;
+    }
+}
+
+/* Budget Filter Modal */
+.budget-filter-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.budget-filter-modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.budget-filter-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.budget-filter-modal-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.budget-close-modal {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+.budget-close-modal:hover {
+    color: #333;
+}
+
+.budget-filter-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.budget-filter-modal .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.5rem;
+}
+
+.budget-filter-modal .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.budget-filter-modal .form-control:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.budget-filter-modal .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.budget-filter-modal .btn-block {
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+.budget-filter-modal .btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.budget-filter-modal .btn-primary:hover {
+    background: #2563eb;
+}
+
+.budget-filter-modal .btn-secondary {
+    background: #64748b;
+    color: white;
+}
+
+.budget-filter-modal .btn-secondary:hover {
+    background: #475569;
+    color: white;
+    text-decoration: none;
+}

@@ -1,0 +1,42 @@
+.badge-info {
+    background-color: #0c4a6e !important;
+    color: #ffffff !important;
+}
+
+.color-dot {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.text-success {
+    color: #047857 !important;
+}
+
+.text-danger {
+    color: #dc2626 !important;
+}
+
+.badge-success {
+    background-color: #047857 !important;
+}
+
+/* Category styling for transactions table */
+.category-icon-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+}
+
+.badge-light {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}

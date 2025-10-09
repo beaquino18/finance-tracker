@@ -1,0 +1,75 @@
+{% extends 'base_landing.html' %}
+
+{% block title %}Sign In - FinFlow{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <a href="{{ url_for('main.index') }}" class="back-home">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2 class="auth-card-title">Welcome Back</h2>
+            
+            <!-- Social Auth Buttons -->
+            <div class="social-auth">
+                <button type="button" class="btn-social">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button type="button" class="btn-social">
+                    <i class="fab fa-apple"></i> Apple
+                </button>
+            </div>
+            
+            <div class="auth-divider">
+                <span>Or sign in with email</span>
+            </div>
+            
+            <!-- Login Form -->
+            <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+                {{ form.csrf_token }}
+                
+                <!-- Email -->
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="john.doe@example.com") }}
+                    {% if form.email.errors %}
+                        <span class="text-danger">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Password -->
+                <div class="form-group">
+                    {{ form.password.label }}
+                    {{ form.password(class="form-control", placeholder="••••••••") }}
+                    {% if form.password.errors %}
+                        <span class="text-danger">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-auth-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                Don't have an account? <a href="{{ url_for('auth.signup') }}">Create Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

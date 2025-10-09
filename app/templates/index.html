@@ -1,0 +1,58 @@
+{% extends 'base_landing.html' %}
+
+{% block title %}Welcome to FinFlow{% endblock %}
+
+{% block content %}
+<div class="single-page-layout">
+    <!-- Hero Section with Integrated Features -->
+    <section class="modern-jumbotron-compact">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">FinFlow</h1>
+                <p class="hero-subtitle">Smart budgeting made simple</p>
+                <p class="hero-description">Track expenses, set goals, and achieve financial freedom with our intuitive platform.</p>
+                
+                <div class="action-buttons">
+                    <a class="btn btn-custom-primary btn-lg mr-3 mb-2" href="{{ url_for('auth.signup') }}" role="button" aria-label="Create a new account">
+                        <i class="fas fa-rocket mr-2"></i>Get Started Free
+                    </a>
+                    <a class="btn btn-custom-secondary btn-lg mb-2" href="{{ url_for('auth.login') }}" role="button" aria-label="Sign in to existing account">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section - Full Width -->
+    <section class="features-section">
+        <div class="container-fluid">
+            <div class="features-row">
+                <!-- SPEND Feature - Title Left, Content Right -->
+                <div class="feature-column spend-column">
+                    <div class="feature-title-large left">SPEND</div>
+                    <div class="feature-content">
+                        <img src="{{ url_for('static', filename='images/credit-card.svg') }}" class="feature-img credit-card-img" alt="Credit Card image">
+                    </div>
+                </div>
+                
+                <!-- TRACK Feature - Title Right, Content Left -->
+                <div class="feature-column track-column">
+                    <div class="feature-title-large right">TRACK</div>
+                    <div class="feature-content">
+                        <img src="{{ url_for('static', filename='images/chart.svg') }}" class="feature-img chart-img" alt="Pie chart with labels">
+                    </div>
+                </div>
+                
+                <!-- SAVE Feature - Title Left, Content Right -->
+                <div class="feature-column save-column">
+                    <div class="feature-title-large left">SAVE</div>
+                    <div class="feature-content">
+                        <img src="{{ url_for('static', filename='images/save.svg') }}" class="feature-img save-img" alt="Money on Jars">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

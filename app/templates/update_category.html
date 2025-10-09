@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Category - Budget Tracker{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/category.css') }}">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/update.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Edit Category: {{ category.name }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('category.update', category_id=category.id) }}" id="categoryForm">
+                    {{ form.csrf_token }}
+                    {{ form.color }}
+                    {{ form.icon }}
+                    
+                    <!-- Category Name -->
+                    <div class="form-group">
+                        {{ form.name.label }}
+                        {{ form.name(class="form-control", placeholder="Enter category name") }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Preview -->
+                    <div class="modal-section">
+                        <h4>Preview</h4>
+                        <div class="preview-box">
+                            <div class="preview-icon" id="previewIcon">
+                                <i class="fas {{ category.icon }}"></i>
+                            </div>
+                            <div class="preview-text">
+                                <span id="previewName">{{ category.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Picker -->
+                    <div class="modal-section">
+                        <h4>Choose Color</h4>
+                        <div class="color-picker-grid">
+                            <div class="color-option {% if category.color.name == 'ORANGE_RED' %}selected{% endif %}" data-color="ORANGE_RED" style="background-color: #BB3E00;"></div>
+                            <div class="color-option {% if category.color.name == 'BLUE' %}selected{% endif %}" data-color="BLUE" style="background-color: #4A90E2;"></div>
+                            <div class="color-option {% if category.color.name == 'GREEN' %}selected{% endif %}" data-color="GREEN" style="background-color: #50E3C2;"></div>
+                            <div class="color-option {% if category.color.name == 'PURPLE' %}selected{% endif %}" data-color="PURPLE" style="background-color: #BD10E0;"></div>
+                            <div class="color-option {% if category.color.name == 'GOLD' %}selected{% endif %}" data-color="GOLD" style="background-color: #F5A623;"></div>
+                            <div class="color-option {% if category.color.name == 'NAVY' %}selected{% endif %}" data-color="NAVY" style="background-color: #2E3A59;"></div>
+                            <div class="color-option {% if category.color.name == 'TEAL' %}selected{% endif %}" data-color="TEAL" style="background-color: #4ECDC4;"></div>
+                            <div class="color-option {% if category.color.name == 'GRAY' %}selected{% endif %}" data-color="GRAY" style="background-color: #95A5A6;"></div>
+                            <div class="color-option {% if category.color.name == 'RED' %}selected{% endif %}" data-color="RED" style="background-color: #E74C3C;"></div>
+                            <div class="color-option {% if category.color.name == 'INDIGO' %}selected{% endif %}" data-color="INDIGO" style="background-color: #5E72E4;"></div>
+                            <div class="color-option {% if category.color.name == 'BLACK' %}selected{% endif %}" data-color="BLACK" style="background-color: #2C3E50;"></div>
+                            <div class="color-option {% if category.color.name == 'EMERALD' %}selected{% endif %}" data-color="EMERALD" style="background-color: #27AE60;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Icon Picker -->
+                    <div class="modal-section">
+                        <h4>Choose Icon</h4>
+                        <div class="icon-picker-grid">
+                            <!-- Finance & Shopping -->
+                            <div class="icon-option {% if category.icon == 'fa-shopping-cart' %}selected{% endif %}" data-icon="fa-shopping-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="icon-label">Cart</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-credit-card' %}selected{% endif %}" data-icon="fa-credit-card">
+                                <i class="fas fa-credit-card"></i>
+                                <span class="icon-label">Card</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-dollar-sign' %}selected{% endif %}" data-icon="fa-dollar-sign">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span class="icon-label">Dollar</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-wallet' %}selected{% endif %}" data-icon="fa-wallet">
+                                <i class="fas fa-wallet"></i>
+                                <span class="icon-label">Wallet</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-piggy-bank' %}selected{% endif %}" data-icon="fa-piggy-bank">
+                                <i class="fas fa-piggy-bank"></i>
+                                <span class="icon-label">Savings</span>
+                            </div>
+                            
+                            <!-- Food & Dining -->
+                            <div class="icon-option {% if category.icon == 'fa-utensils' %}selected{% endif %}" data-icon="fa-utensils">
+                                <i class="fas fa-utensils"></i>
+                                <span class="icon-label">Dining</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-coffee' %}selected{% endif %}" data-icon="fa-coffee">
+                                <i class="fas fa-coffee"></i>
+                                <span class="icon-label">Coffee</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-pizza-slice' %}selected{% endif %}" data-icon="fa-pizza-slice">
+                                <i class="fas fa-pizza-slice"></i>
+                                <span class="icon-label">Pizza</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-beer' %}selected{% endif %}" data-icon="fa-beer">
+                                <i class="fas fa-beer"></i>
+                                <span class="icon-label">Beer</span>
+                            </div>
+                            
+                            <!-- Transportation -->
+                            <div class="icon-option {% if category.icon == 'fa-car' %}selected{% endif %}" data-icon="fa-car">
+                                <i class="fas fa-car"></i>
+                                <span class="icon-label">Car</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-bus' %}selected{% endif %}" data-icon="fa-bus">
+                                <i class="fas fa-bus"></i>
+                                <span class="icon-label">Bus</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-train' %}selected{% endif %}" data-icon="fa-train">
+                                <i class="fas fa-train"></i>
+                                <span class="icon-label">Train</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-plane' %}selected{% endif %}" data-icon="fa-plane">
+                                <i class="fas fa-plane"></i>
+                                <span class="icon-label">Plane</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-bicycle' %}selected{% endif %}" data-icon="fa-bicycle">
+                                <i class="fas fa-bicycle"></i>
+                                <span class="icon-label">Bike</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-gas-pump' %}selected{% endif %}" data-icon="fa-gas-pump">
+                                <i class="fas fa-gas-pump"></i>
+                                <span class="icon-label">Gas</span>
+                            </div>
+                            
+                            <!-- Home & Utilities -->
+                            <div class="icon-option {% if category.icon == 'fa-home' %}selected{% endif %}" data-icon="fa-home">
+                                <i class="fas fa-home"></i>
+                                <span class="icon-label">Home</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-lightbulb' %}selected{% endif %}" data-icon="fa-lightbulb">
+                                <i class="fas fa-lightbulb"></i>
+                                <span class="icon-label">Electric</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-tools' %}selected{% endif %}" data-icon="fa-tools">
+                                <i class="fas fa-tools"></i>
+                                <span class="icon-label">Tools</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-couch' %}selected{% endif %}" data-icon="fa-couch">
+                                <i class="fas fa-couch"></i>
+                                <span class="icon-label">Furniture</span>
+                            </div>
+                            
+                            <!-- Health & Fitness -->
+                            <div class="icon-option {% if category.icon == 'fa-heartbeat' %}selected{% endif %}" data-icon="fa-heartbeat">
+                                <i class="fas fa-heartbeat"></i>
+                                <span class="icon-label">Health</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-pills' %}selected{% endif %}" data-icon="fa-pills">
+                                <i class="fas fa-pills"></i>
+                                <span class="icon-label">Medicine</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-dumbbell' %}selected{% endif %}" data-icon="fa-dumbbell">
+                                <i class="fas fa-dumbbell"></i>
+                                <span class="icon-label">Fitness</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-hospital' %}selected{% endif %}" data-icon="fa-hospital">
+                                <i class="fas fa-hospital"></i>
+                                <span class="icon-label">Hospital</span>
+                            </div>
+                            
+                            <!-- Entertainment -->
+                            <div class="icon-option {% if category.icon == 'fa-film' %}selected{% endif %}" data-icon="fa-film">
+                                <i class="fas fa-film"></i>
+                                <span class="icon-label">Movies</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-music' %}selected{% endif %}" data-icon="fa-music">
+                                <i class="fas fa-music"></i>
+                                <span class="icon-label">Music</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-gamepad' %}selected{% endif %}" data-icon="fa-gamepad">
+                                <i class="fas fa-gamepad"></i>
+                                <span class="icon-label">Gaming</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-book' %}selected{% endif %}" data-icon="fa-book">
+                                <i class="fas fa-book"></i>
+                                <span class="icon-label">Books</span>
+                            </div>
+                            
+                            <!-- Personal -->
+                            <div class="icon-option {% if category.icon == 'fa-gift' %}selected{% endif %}" data-icon="fa-gift">
+                                <i class="fas fa-gift"></i>
+                                <span class="icon-label">Gifts</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-tshirt' %}selected{% endif %}" data-icon="fa-tshirt">
+                                <i class="fas fa-tshirt"></i>
+                                <span class="icon-label">Clothing</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-cut' %}selected{% endif %}" data-icon="fa-cut">
+                                <i class="fas fa-cut"></i>
+                                <span class="icon-label">Haircut</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-graduation-cap' %}selected{% endif %}" data-icon="fa-graduation-cap">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span class="icon-label">Education</span>
+                            </div>
+                            
+                            <!-- Business & Work -->
+                            <div class="icon-option {% if category.icon == 'fa-briefcase' %}selected{% endif %}" data-icon="fa-briefcase">
+                                <i class="fas fa-briefcase"></i>
+                                <span class="icon-label">Business</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-laptop' %}selected{% endif %}" data-icon="fa-laptop">
+                                <i class="fas fa-laptop"></i>
+                                <span class="icon-label">Tech</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-chart-line' %}selected{% endif %}" data-icon="fa-chart-line">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="icon-label">Chart</span>
+                            </div>
+                            
+                            <!-- Other -->
+                            <div class="icon-option {% if category.icon == 'fa-question-circle' %}selected{% endif %}" data-icon="fa-question-circle">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="icon-label">Other</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-star' %}selected{% endif %}" data-icon="fa-star">
+                                <i class="fas fa-star"></i>
+                                <span class="icon-label">Star</span>
+                            </div>
+                            <div class="icon-option {% if category.icon == 'fa-tag' %}selected{% endif %}" data-icon="fa-tag">
+                                <i class="fas fa-tag"></i>
+                                <span class="icon-label">Tag</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Update Category</button>
+                        <a href="{{ url_for('category.detail', category_id=category.id) }}" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Color mapping
+    const colorMap = {
+        'ORANGE_RED': '#BB3E00',
+        'BLUE': '#4A90E2',
+        'GREEN': '#50E3C2',
+        'PURPLE': '#BD10E0',
+        'GOLD': '#F5A623',
+        'NAVY': '#2E3A59',
+        'TEAL': '#4ECDC4',
+        'GRAY': '#95A5A6',
+        'RED': '#E74C3C',
+        'INDIGO': '#5E72E4',
+        'BLACK': '#2C3E50',
+        'EMERALD': '#27AE60'
+    };
+    
+    // Initialize with current values
+    let selectedColor = '{{ category.color.name }}';
+    let selectedIcon = '{{ category.icon }}';
+    
+    // Set initial preview
+    document.getElementById('color').value = selectedColor;
+    document.getElementById('icon').value = selectedIcon;
+    updatePreview();
+    
+    // Color picker functionality
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected from all
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            
+            // Add selected to clicked
+            this.classList.add('selected');
+            selectedColor = this.dataset.color;
+            
+            // Update hidden field
+            document.getElementById('color').value = selectedColor;
+            
+            // Update preview
+            updatePreview();
+        });
+    });
+    
+    // Icon picker functionality
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected from all
+            document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+            
+            // Add selected to clicked
+            this.classList.add('selected');
+            selectedIcon = this.dataset.icon;
+            
+            // Update hidden field
+            document.getElementById('icon').value = selectedIcon;
+            
+            // Update preview
+            updatePreview();
+        });
+    });
+    
+    // Name field updates preview
+    document.getElementById('name').addEventListener('input', function() {
+        updatePreview();
+    });
+    
+    function updatePreview() {
+        const previewIcon = document.getElementById('previewIcon');
+        const previewName = document.getElementById('previewName');
+        const nameInput = document.getElementById('name');
+        
+        // Update icon
+        if (selectedIcon) {
+            previewIcon.innerHTML = `<i class="fas ${selectedIcon}"></i>`;
+        }
+        
+        // Update color
+        if (selectedColor) {
+            previewIcon.style.backgroundColor = colorMap[selectedColor];
+        }
+        
+        // Update name
+        if (nameInput.value.trim()) {
+            previewName.textContent = nameInput.value;
+        }
+    }
+    
+    // Form validation
+    document.getElementById('categoryForm').addEventListener('submit', function(e) {
+        if (!selectedColor || !selectedIcon) {
+            e.preventDefault();
+            alert('Please select both a color and an icon for your category.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}
