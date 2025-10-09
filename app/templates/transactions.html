@@ -11,7 +11,7 @@
     <!-- Header Section -->
     <div class="transactions-header">
         <button class="filter-button" onclick="openFilterModal()">
-            <i class="fas fa-filter"></i> Filter By
+            <i class="fas fa-filter"></i> Filter
         </button>
         <div class="balance-display">CA$ {{ "%.2f"|format(total_balance) }}</div>
         <div class="cash-flow-label">
@@ -35,42 +35,75 @@
 
     <!-- Overview Button -->
     <button class="overview-button" onclick="window.location.href='{{ url_for('main.dashboard') }}'">
-        Overview
+        <i class="fas fa-home"></i> Overview
     </button>
 
     <!-- Transactions List -->
     {% for date, transactions in transactions_by_date.items() %}
-        <div class="date-header">{{ date }}</div>
+        {% if transactions %}
+            {% set first_transaction = transactions[0] %}
+            {% set wallet_name = first_transaction.wallet.name.lower() %}
+            {% set wallet_color = '#95a5a6' %}
         
-        {% for transaction in transactions %}
-            <div class="transaction-item" data-transaction-id="{{ transaction.id }}">
-                <div class="transaction-icon">
-                    <i class="fas {{ transaction.category.icon }}"></i>
-                </div>
-                
-                <div class="transaction-details">
-                    <div class="transaction-category">{{ transaction.category.name }}</div>
-                    
-                    {% if transaction.labels %}
-                        <div class="transaction-labels">
-                            {% for label in transaction.labels %}
-                                <span class="label-badge">{{ label.name }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <div class="transaction-wallet">{{ transaction.wallet.name }}</div>
-                    
-                    {% if transaction.description %}
-                        <div class="transaction-note">{{ transaction.description }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="transaction-amount {{ 'expense' if transaction.is_expense else 'income' }}">
-                    {{ '-' if transaction.is_expense else '+' }}${{ "%.2f"|format(transaction.amount) }}
-                </div>
+            
+            <div class="transaction-date-group">
+            <div class="date-header">
+                {{ date }}
             </div>
-        {% endfor %}
+            
+            {% for transaction in transactions %}
+                <div class="transaction-item" data-transaction-id="{{ transaction.id }}" style="display: flex; align-items: center;">
+                    <!-- Category Icon with Category Color -->
+                    <div class="transaction-icon" style="background-color: {{ transaction.category.color.value }}; flex-shrink: 0;">
+                        <i class="fas {{ transaction.category.icon }}"></i>
+                    </div>
+                    
+                    <div class="transaction-details" style="flex: 1;">
+                        <div class="transaction-category">{{ transaction.category.name }}</div>
+                        
+                        {% if transaction.labels %}
+                            <div class="transaction-labels">
+                                {% for label in transaction.labels %}
+                                    <span class="label-badge">
+                                        <i class="fas fa-tag"></i> {{ label.name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="transaction-wallet">
+                            {% set wallet_name = transaction.wallet.name.lower() %}
+                            {% set wallet_badge_color = '#95a5a6' %}
+                            
+                            {# Assign specific colors based on wallet name #}
+                            {% if 'cash' in wallet_name %}
+                                {% set wallet_badge_color = '#ff6f00' %}
+                            {% elif 'checking' in wallet_name %}
+                                {% set wallet_badge_color = '#80d8ff' %}
+                            {% elif 'saving' in wallet_name %}
+                                {% set wallet_badge_color = '#ffd700' %}
+                            {% elif 'credit' in wallet_name %}
+                                {% set wallet_badge_color = '#ffc4a3' %}
+                            {% endif %}
+                            
+                            <span class="transaction-wallet-badge" style="background-color: {{ wallet_badge_color }}">
+                                <i class="fas fa-wallet"></i>
+                                {{ transaction.wallet.name }}
+                            </span>
+                        </div>
+
+                        {% if transaction.description %}
+                            <div class="transaction-note">{{ transaction.description }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="transaction-amount {{ 'expense' if transaction.is_expense else 'income' }}" style="flex-shrink: 0;">
+                        {{ '-' if transaction.is_expense else '+' }}${{ "%.2f"|format(transaction.amount) }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        </div>
     {% else %}
         <div class="alert alert-info">
             No transactions found. <a href="{{ url_for('transaction.create') }}">Create your first transaction</a>.
